@@ -1,20 +1,10 @@
 <template>
-    <nav class="header-fix" :class="[ scrollDistance > 0 ? 'bg-primary' : 'bg-transparent' ]">
+    <nav class="header-fix ease-in-out duration-300" :class="[ scrollDistance > 0 ? 'bg-primary' : 'bg-transparent' ]">
         <div class="w-5/6">
             <ol class="flex justify-around w-[calc(100%-60px)] text-lg font-semibold"
             :class="[ scrollDistance > 0 ? 'text-white' : 'text-secondary' ]">
-                <li>
-                    <span><font-awesome-icon class="mr-2" :icon="['fas', 'house']" /></span>Top
-                </li>
-                <li>
-                    <span><font-awesome-icon class="mr-2" :icon="['fas', 'list-ol']" /></span>Pain points
-                </li>
-                <li>
-                    <span><font-awesome-icon class="mr-2" :icon="['fas', 'pizza-slice']" /></span>Features
-                </li>
-                <li>
-                    <span><font-awesome-icon class="mr-2" :icon="['fas', 'hand-holding-dollar']" /></span>Start up
-                    
+                <li v-for="({ title, icon }, index) in menu" :key="index" class="hidden sm:block">
+                    <span class="hidden"><font-awesome-icon class="mr-2" :icon="icon" /></span>{{ title }}
                 </li>
             </ol>
         </div>
@@ -40,13 +30,21 @@
         margin-bottom: 5px;
     }
 }
+nav {
+    z-index: 999;
+}
 </style>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 
 const scrollDistance = ref(0)
-
+const menu = ref([
+    { title: 'Top', icon: ['fas', 'house'] },
+    { title: 'Pain points', icon: ['fas', 'list-ol'] },
+    { title: 'Features', icon: ['fas', 'pizza-slice'] },
+    { title: 'Start up', icon: ['fas', 'hand-holding-dollar'] }
+])
 onMounted(() => {
   document.addEventListener('scroll', () => {
     scrollDistance.value = window.scrollY;
