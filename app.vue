@@ -2,31 +2,31 @@
   <!-- <div>
     <NuxtWelcome />
   </div> -->
-  <div class="bg-white minh-screen">
+  <div class="bg-white min-h-screen overflow-hidden">
     <MainHeader />
     <section class="bg-top">
       <main class="flex flex-wrap h-screen flex-col sm:flex-row items-center justify-center px-6">
-        <div class="w-[100%] sm:w-[60%] flex items-center justify-center">
-          <img class="w-[50vw] max-h-[55vh]" src="~/assets/images/main-kv.svg" alt="Financial Assets Website helps solving financial issues, such as spending tracking, bills managing, and setting savings goals to fullfill step by step.">
+        <div class="w-[100%] lg:w-[60%] md:order-2 lg:order-1 mt-8 sm:mt-16 flex items-center justify-center">
+          <img class="w-[70vw] max-h-[55vh]" src="~/assets/images/main-kv.svg" alt="Financial Assets Website helps solving financial issues, such as spending tracking, bills managing, and setting savings goals to fullfill step by step.">
         </div>
-        <article class="w-[100%] sm:w-[40%] text-secondary text-center sm:text-left py-8 sm:py-0">
-          <h1 class="text-title">Financial<br />Assistant</h1>
+        <article class="w-[100%] lg:w-[40%] md:order-1 sm:mt-16 lg:order-2 text-secondary text-center lg:text-left py-8 sm:py-0">
+          <h1 class="text-title mb-6">Financial<br />Assistant</h1>
           <h2 class="text-content">
             Tracks your spending<br />for healthy financial affairs.
           </h2>
         </article>
       </main>
-      <article class="min-h-screen flex text-center container items-center justify-center">
-        <div>
-          <h2 class="text-subtitle">We hear your concerns</h2>
-          <p class="text-content">You always end up with empty pockets and bank accounts, confused about where your money is going,<br />with plenty of bills waiting in line to be paid.</p>
-          <div class="flex flex-column sm:flex-row flex-wrap pt-10 sm:pt-16"
+
+      <article class="flex text-center container items-center justify-center mt-16">
+        <div class="px-4">
+          <h2 class="text-subtitle mb-4">We hear your concerns</h2>
+          <p class="text-content">You always end up with empty pockets and bank accounts, confused about where your money is going,<br class="hidden md:block" /> with plenty of bills waiting in line to be paid.</p>
+          <div class="flex flex-column sm:justify-center sm:flex-row flex-wrap pt-10 sm:pt-10 sm:pb-16 md:pt-16"
             @pointerleave.stop="imgState.index = -1">
             <div v-for="({ origin, hovered, description }, index) in painPoints" :key="index"
-              class="relative w-[100%] sm:w-[33.33%] h-[40vh] flex items-center justify-center first:pr-6 sm:first:pr-9 not-first:not-last:px-6 sm:not-first:not-last:px-9 sm:last:pl-9"
+              class="relative w-[100%] sm:w-[50%] lg:w-[33.33%] calc-height flex items-center justify-center first:pr-6 sm:first:pr-9 not-first:not-last:px-6 sm:not-first:not-last:px-9 sm:last:pl-9 py-3"
               :class="[
-                  (index === 0) ? 'order-2 sm:order-1' : 'order-1 sm:order-2',
-                  (index === (painPoints.length - 1))? 'order-3' : ''
+                  (index === 0) ? 'order-2 sm:order-1 lg:order-1' : (index === 1) ? 'order-1 sm:order-3 lg:order-2' : 'order-3 sm:order-2'
                 ]"
               @pointerenter="changeImgState(index, 'hovered')"
               @pointerleave="changeImgState(index, 'origin')">
@@ -37,37 +37,39 @@
                   (imgState.index === index) && (imgState.index !== -1) ? 'opacity-100' : 'opacity-0'
                 ]" style="z-index:3" v-html="description">
               </p>
-              <div class="relative">
-                <img class="flex object-contain max-h-[50vh] ease-in-out duration-300 absolute"
+              <figure class="relative h-[26vh] md:h-[100%]"
+                :class="[ index === 1 || index === (painPoints.length - 1)
+                  ? 'translate-x-[5vw] sm:translate-x-0' : '-translate-x-[5vw] sm:translate-x-0' ]" :data-index="index">
+                <img class="flex object-contain w-[100%] h-[100%] ease-in-out duration-300 absolute"
                   :class="[
                     (imgState.index === index) && (imgState.index !== -1) ? 'opacity-0' : 'opacity-100',
                     (index === 1) ? '' : 'order-1 sm:order-2',
                   ]"
                   :src="origin" alt="">
-                <img class="d-block object-contain max-h-[50vh]"
+                <img class="d-block object-contain w-[100%] h-[100%]"
                   :src="hovered" alt="">
-                <img v-show="index === 1" class="absolute object-contain max-h-[50vh] animate-float" style="top: 0; left: 0"
+                <img v-show="index === 1" class="absolute object-contain w-[100%] h-[100%] animate-float" style="top: 0; left: 0"
                   :class="[(imgState.index === index) && (imgState.index !== -1) ? 'opacity-0' : 'opacity-100']"
                 :src="moneyFly" alt="">
-                <img v-show="index === 1" class="absolute object-contain max-h-[50vh]" style="top: 0; left: 0"
+                <img v-show="index === 1" class="absolute object-contain w-[100%] h-[100%]" style="top: 0; left: 0"
                   :class="[(imgState.index === index) && (imgState.index !== -1) ? 'opacity-0' : 'opacity-100']"
                 :src="moneyStay" alt="">
-              </div>
+              </figure>
             </div>
           </div>
         </div>
       </article>
     </section>
     <!-- carousel -->
-    <section class="min-h-[80vh] bg-linear relative overflow-hidden">
-      <article class="flex flex-wrap justify-between container pt-5 sm:p-11 px-6 lg:px-0">
-        <div class="inline-block sm:w-[50%] lg:w-auto sm:px-2 lg:px-0 order-2 md:order-1">
-          <p class="text-content mt-0">
-            Financial Assistant help you deal with your expenses and budgets<br />
-            more efficiently and dounbtless, category system visualizes those unseen<br />
-            and potential over wasted costs
+    <section class="occupied-wrapper bg-linear relative my-10">
+      <article class="flex flex-wrap justify-between container pt-5 sm:py-11  px-6 lg:px-6">
+        <div class="inline-block sm:w-[50%] lg:w-auto sm:px-2 lg:px-0 order-2 sm:order-1">
+          <p class="text-content mt-0 md:translate-y-[10px]">
+            Financial Assistant help you deal with your expenses and budgets<br class="hidden sm:block" />
+            more efficiently and dounbtless, category system visualizes those unseen<br class="hidden sm:block" />
+            and potential over wasted costs.
           </p>
-          <div class="text-4xl lg:text-5xl text-secondary mt-3 sm:mt-7 text-right">
+          <div class="text-4xl lg:text-5xl text-secondary mt-3 sm:mt-7 text-right relative z-20">
             <span @click="(carouselCounter <= 0) ? carouselCounter = (features.length - 1) : carouselCounter--; loopType = 'prev'">
               <font-awesome-icon class="font-2xl first:mr-3" :icon="['fa-regular', 'fa-circle-left']" />
             </span>
@@ -76,35 +78,55 @@
             </span>
           </div>
         </div>
-        <h2 class="text-subtitle flex justify-end md:w-[40%] sm:w-[50%] lg:w-auto sm:px-2 lg:px-0 order-1 md:order-2 mb-4 sm:mb-0">How we could<br />solve your<br />expenses issues.</h2>
+        <h2 class="text-subtitle flex justify-end mb-6 md:mb-0 md:w-[40%] sm:w-[50%] lg:w-auto sm:px-2 lg:px-0 order-1 sm:order-2sm:text-right lg:text-left">
+          How we could<br />solve your<br />expenses issues.
+        </h2>
       </article>
-      <div class="flex items-stretch relative pointer-events-none h-[40%] mt-4 sm:mt-0 sm:-translate-y-[5vw] scale-[1.6] sm:scale-[1] origin-top-left">
+      <div class="flex items-stretch relative h-[40%] sm:mt-0 scale-[1.6] sm:scale-[1.2] lg:scale-[1] origin-top-left -translate-y-[3vh] lg:translate-y-[3vh] occupied">
         <figure v-for="({ src }, index) in features" :key="index"
-          class="object-contain aspect-square shrink-0 absolute top-0 h-[30vw] ease-linear duration-300"
+          class="object-contain aspect-square shrink-0 absolute sm:-top-[5vw] h-[min(34vh, 34vw)] ease-linear duration-300 z-20"
           :class="[
             ((carouselCounter + index)%features.length === 1) ? 'w-[40%] px-[4vw]' : 'w-[20%] px-[3vw]',
-            ((carouselCounter + index)%features.length === (features.length -1)) && (loopType == 'prev') ? 'animate-flash-prev' : '',
-            ((carouselCounter + index)%features.length === 1) && (loopType === 'next') ? 'animate-flash-next' : '',
+            ((loopType == 'prev') && (carouselCounter + index)%features.length === (features.length -1)) ? 'animate-flash-prev' : '',
+            ((loopType === 'next') && (carouselCounter + index)%features.length === 1) ? 'animate-flash-next' : ''
           ]"
           :style="`left: ${loopType === 'next' && (carouselCounter + index)%features.length === 0
-              ? '100' : carouselPositions[Math.abs((carouselCounter + index)%features.length)]}%`" :data-main="index+ ' ' +(mainIndex - 2)">
+              ? '100' : carouselPositions[Math.abs((carouselCounter + index)%features.length)]}%; height: min(36vw, 36vh)`">
           <img class="w-[100%] h-[100%]" :src="src" alt="">
         </figure>
-        
+        <img class="absolute w-[40%] px-[4vw] opacity-80 bottom-0" :src="platformImg">
       </div>
-      <article class="text-center flex justify-end text-xl sm:text-3xl font-medium h-30 absolute bottom-[10vh] w-[100%]">
-        <div class="w-[60%] linear">
-          <div class="relative inline-block">
+      <article class="text-center flex justify-end font-medium h-30 absolute bottom-[20px] sm:bottom-[10vh] md:bottom-[5vh] lg:bottom-[10vh] w-[100%] mb-8">
+        <div class="w-[100%] sm:w-[60%] linear">
+          <div class="relative inline-block text-xl sm:text-2xl md:text-3xl">
             <span>{{ features[mainIndex].title }}</span>
-            <div ref="underlineL" class="absolute bottom-0 h-[1px] bg-black left-[50%] animate-underline"></div>
-            <div ref="underlineR" class="absolute bottom-0 h-[1px] bg-black right-[50%] animate-underline"></div>
+            <div ref="underlineL" class="absolute -bottom-[2px] h-[1px] bg-black left-[50%] animate-underline"></div>
+            <div ref="underlineR" class="absolute -bottom-[2px] h-[1px] bg-black right-[50%] animate-underline"></div>
           </div>
         </div>
-        
-        
       </article>
     </section>
-    </div>
+    <section class="bg-bottom min-h-[calc(100vh-70px)] flex items-center py-6 pt-16 overflow-visible">
+      <div class="container sm:px-6 flex flex-wrap items-stretch pb-6">
+        <article class="mx-8 order-2 lg:order-1 w-[100%] sm:w-[68%] lg:w-[30%] lg:mx-0 bg-primary rounded-t-full text-center flex flex-wrap items-center justify-center min-h-[60vh] md:mx-auto lg:min-h-[70vh] my-auto">
+          <div>
+            <div class="px-6">
+              <h2 class="w-[100%] font-extrabold text-3xl sm:text-4xl text-white">Sign up</h2>
+              <p class="font-bold text-xs sm:text-base text-white my-4">Register your personal financial assistant,building wealth wait for no one!</p>
+            </div>
+            <form class="font-extrabold " action="">
+              <input class="w-[80%] my-3 p-3 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-black" placeholder="Email" type="text">
+              <input class="w-[80%] my-3 p-3 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-black" placeholder="Password" type="text">
+            </form>
+            <p class="font-bold">Sign in by Google</p>
+          </div>
+        </article>
+        <figure class="order-1 pb-10 sm:pb-0 w-[100%] lg:w-[70%] px-8 max-h-[70vw] md:max-h-[45vh] md:mb-6 lg:max-h-[80vh] sm:pl-8">
+          <img class="w-[100%] h-[100%] object-contain" :src="signUpComputer" alt="">
+        </figure>
+      </div>
+    </section>
+  </div>
 </template>
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Karla:wght@200;400;800&display=swap');
@@ -124,8 +146,16 @@
     }
     &-linear {
       background: linear-gradient(90deg, rgba(232,255,220,1) 52%, rgba(252,247,172,0.46) 100%);
-      background-size: 100% 60%;
+      background-size: 100% 74%;
       background-repeat: no-repeat;
+      @media all and (max-width: 600px) {
+        background-size: 100% 100%;
+      }
+    }
+    &-bottom {
+      background-image: url(~/assets/images/bg-bottom.svg);
+      background-size: cover;
+      background-position: top center;
     }
   }
   .text {
@@ -133,31 +163,31 @@
       @apply font-extrabold text-5xl sm:text-6xl font-sans text-secondary;
     }
     &-subtitle {
-      @apply font-extrabold text-4xl sm:text-5xl  font-sans text-secondary;
-      ~.text-content {
-        @apply sm:mt-9;
-      }
+      @apply font-extrabold text-3xl sm:text-5xl  font-sans text-secondary;
     }
     &-content {
-      @apply text-sm font-bold text-secondary;
+      @apply text-xs md:text-base font-bold text-secondary;
     }
     &-upper {
       @apply mt-4 sm:mt-9 font-bold text-secondary uppercase text-2xl;
     }
   }
   .container {
-    max-width: 1200px;
+    max-width: 1280px;
     margin-inline: auto;
   }
     
   @mixin animate-float($duration, $timing-function) {
     animation: float $duration $timing-function infinite alternate;
     @keyframes float {
-      from {
+      0% {
         transform: translateY(-4%);
       }
-      to {
-        transform: translateY(8%);
+      80% {
+        transform: translateY(0%);
+      }
+      100% {
+        transform: translateY(5%);
       }
     }
   }
@@ -202,31 +232,20 @@
     width: 50%;
     animation: $direction $duration $timing-function 1 forwards;
     transform-origin: center center;
-    @keyframes left {
+    @keyframes #{$direction} {
       0% {
         width: 0;
-        left: 50%;
+        #{$direction}: 50%;
       }
       100% {
         width: 50%;
-        left: 50%;
-      }
-    }
-    @keyframes right {
-      0% {
-        width: 0;
-        right: 50%;
-      }
-      100% {
-        width: 50%;
-        right: 50%;
+        #{$direction}: 50%;
       }
     }
   }
 
   .animate-float {
-    opacity: 0;
-    @include animate-float(.4s, ease-in);
+    @include animate-float(3s, linear);
   }
   .animate-flash {
     &-prev {
@@ -249,7 +268,29 @@
     }
   }
 
+  .occupied {
+    &-wrapper {
+      // min-height: 80vh;
+      min-height: 70vh;
+      @media screen and (min-aspect-ratio: 200/950) and (max-aspect-ratio: 280/700) {
+        min-height: 65vh;
+      }
+      @media screen and (min-aspect-ratio: 280/700) and (max-aspect-ratio: 375/668) {
+        min-height: 70vh;
+      }
+      @media screen and (min-aspect-ratio: 375/667) and (max-aspect-ratio: 414/300) and (max-width:600px) {
+        min-height: 85vh;
+      }
+      @media screen and (min-aspect-ratio: 414/300) {
+        min-height: 80vh;
+      }
+    }
 
+    min-height: calc(min(36vw, 36vh));
+  }
+  .calc-height {
+    max-height: calc(min(100vh, 100vw) - 70px);
+  }
 </style>
 <script setup>
   import { ref, onMounted } from 'vue';
@@ -266,9 +307,12 @@
   import feature4 from '~/assets/images/feature4.svg';
   import feature5 from '~/assets/images/feature5.svg';
   import moneyStay from '~/assets/images/money-stay.svg';
+  import platformImg from '~/assets/images/platform.svg';
+  import signUpComputer from '~/assets/images/sign-up-computer.svg';
 
   const underlineL = ref(null);
   const underlineR = ref(null);
+  const carouselBase = ref(20);
 
   const painPoints = ref([
     {
@@ -303,7 +347,7 @@
   const loopType = 'next';
 
   const carouselPositions = computed(() => [...Array(features.value.length).keys()]
-    .map((item, index) => index === 2 ? '40' : index === 0 ? (index - 1) * 20 : index === 1 ? 0 : 40 + (index - 2) * 20));
+    .map((item, index) => index === 2 ? carouselBase.value * 2 : index === 0 ? (index - 1) * carouselBase.value : index === 1 ? 0 : 40 + (index - 2) * carouselBase.value));
   const carouselCounter = ref(1);
   const mainIndex = computed(()=> [...Array(features.value.length).keys()]
     .findIndex((index) => (carouselCounter.value + index)%(features.value.length) === 1));
@@ -324,7 +368,7 @@
 
   watch(mainIndex, (val,oldVa)=>{
     setTimeout(() => {
-      console.log(underlineR.value.classList, underlineL.value.classList)
+      // console.log(underlineR.value.classList, underlineL.value.classList)
       underlineR.value.classList.add('r');
       underlineL.value.classList.add('l');
       setTimeout(() => {
