@@ -61,7 +61,7 @@
       </article>
     </section>
     <!-- carousel -->
-    <section class="occupied-wrapper bg-linear relative my-10">
+    <section class="bg-linear relative mt-10">
       <article class="flex flex-wrap justify-between container pt-5 sm:py-11  px-6 lg:px-6">
         <div class="inline-block sm:w-[50%] lg:w-auto sm:px-2 lg:px-0 order-2 sm:order-1">
           <p class="text-content mt-0 md:translate-y-[10px]">
@@ -82,7 +82,7 @@
           How we could<br />solve your<br />expenses issues.
         </h2>
       </article>
-      <div class="flex items-stretch relative h-[40%] sm:mt-0 scale-[1.6] sm:scale-[1.2] lg:scale-[1] origin-top-left -translate-y-[3vh] lg:translate-y-[3vh] occupied">
+      <div class="relative flex items-stretch h-[40%] sm:mt-0 scale-[1.6] sm:scale-[1.2] lg:scale-[1] origin-top-left -translate-y-[3vh] lg:translate-y-[3vh] occupied" >
         <figure v-for="({ src }, index) in features" :key="index"
           class="object-contain aspect-square shrink-0 absolute sm:-top-[5vw] h-[min(34vh, 34vw)] ease-linear duration-300 z-20"
           :class="[
@@ -94,31 +94,36 @@
               ? '100' : carouselPositions[Math.abs((carouselCounter + index)%features.length)]}%; height: min(36vw, 36vh)`">
           <img class="w-[100%] h-[100%]" :src="src" alt="">
         </figure>
-        <img class="absolute w-[40%] px-[4vw] opacity-80 bottom-0" :src="platformImg">
-      </div>
-      <article class="text-center flex justify-end font-medium h-30 absolute bottom-[20px] sm:bottom-[10vh] md:bottom-[5vh] lg:bottom-[10vh] w-[100%] mb-8">
-        <div class="w-[100%] sm:w-[60%] linear">
-          <div class="relative inline-block text-xl sm:text-2xl md:text-3xl">
-            <span>{{ features[mainIndex].title }}</span>
-            <div ref="underlineL" class="absolute -bottom-[2px] h-[1px] bg-black left-[50%] animate-underline"></div>
-            <div ref="underlineR" class="absolute -bottom-[2px] h-[1px] bg-black right-[50%] animate-underline"></div>
+        <img class="absolute w-[40%] px-[4vw] opacity-80 bottom-[20px] mb-6 sm:mb-0" :src="platformImg">
+        <article class="absolute flex justify-center sm:justify-end font-medium h-30 bottom-[20px] w-[calc(60%+12px)] sm:w-[calc(80%+3vw)] md:w-[calc(80%+3vw)] lg:w-[100%]">
+          <div class="w-[100%] sm:w-[60%] linear flex justify-center text-center">
+            <div class="relative inline-block">
+              <div class="text-xs sm:text-sm md:text-xl lg:text-2xl" style="" v-html="features[mainIndex].title"></div>
+              <div ref="underlineL" class="absolute -bottom-[2px] h-[1px] bg-black left-[50%] animate-underline"></div>
+              <div ref="underlineR" class="absolute -bottom-[2px] h-[1px] bg-black right-[50%] animate-underline"></div>
+            </div>
           </div>
-        </div>
-      </article>
+        </article>
+      </div>
+      
     </section>
     <section class="bg-bottom min-h-[calc(100vh-70px)] flex items-center py-6 pt-16 overflow-visible">
       <div class="container sm:px-6 flex flex-wrap items-stretch pb-6">
-        <article class="mx-8 order-2 lg:order-1 w-[100%] sm:w-[68%] lg:w-[30%] lg:mx-0 bg-primary rounded-t-full text-center flex flex-wrap items-center justify-center min-h-[60vh] md:mx-auto lg:min-h-[70vh] my-auto">
-          <div>
+        <article class="mx-8 order-2 lg:order-1 w-[100%] sm:w-[68%] lg:w-[30%] sm:mx-auto lg:mx-0 bg-primary rounded-t-full text-center flex flex-wrap items-center justify-center min-h-[60vh] md:mx-auto lg:min-h-[70vh] my-auto">
+          <div class="flex flex-col items-center">
             <div class="px-6">
-              <h2 class="w-[100%] font-extrabold text-3xl sm:text-4xl text-white">Sign up</h2>
-              <p class="font-bold text-xs sm:text-base text-white my-4">Register your personal financial assistant,building wealth wait for no one!</p>
+              <h2 class="w-[100%] font-extrabold text-3xl sm:text-4xl text-white mt-3 md:mt-6">Sign up</h2>
+              <p class="font-bold text-xs sm:text-base text-white my-4 sm:px-10">Register your personal financial assistant,building wealth wait for no one!</p>
             </div>
-            <form class="font-extrabold " action="">
-              <input class="w-[80%] my-3 p-3 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-black" placeholder="Email" type="text">
-              <input class="w-[80%] my-3 p-3 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-black" placeholder="Password" type="text">
+            <form class="font-extrabold" action="">
+              <input class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-black" placeholder="Email" type="text">
+              <input class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-black" placeholder="Password" type="text">
             </form>
-            <p class="font-bold">Sign in by Google</p>
+            <GoButton class="py-3" type="dark" align="center"/>
+            <div class="inline-block font-bold">
+              <div class="w-[100%] h-[1px] bg-black my-2"></div>
+              Sign in by Google
+            </div>
           </div>
         </article>
         <figure class="order-1 pb-10 sm:pb-0 w-[100%] lg:w-[70%] px-8 max-h-[70vw] md:max-h-[45vh] md:mb-6 lg:max-h-[80vh] sm:pl-8">
@@ -126,6 +131,7 @@
         </figure>
       </div>
     </section>
+    <MainFooter></MainFooter>
   </div>
 </template>
 <style lang="scss">
@@ -148,8 +154,10 @@
       background: linear-gradient(90deg, rgba(232,255,220,1) 52%, rgba(252,247,172,0.46) 100%);
       background-size: 100% 74%;
       background-repeat: no-repeat;
-      @media all and (max-width: 600px) {
-        background-size: 100% 100%;
+      padding-bottom: min(30vw, 10vh);
+      @media all and (max-width: 960px) and (orientation: portrait){
+        background-size: 100% 78%;
+        
       }
     }
     &-bottom {
@@ -269,24 +277,13 @@
   }
 
   .occupied {
-    &-wrapper {
-      // min-height: 80vh;
-      min-height: 70vh;
-      @media screen and (min-aspect-ratio: 200/950) and (max-aspect-ratio: 280/700) {
-        min-height: 65vh;
-      }
-      @media screen and (min-aspect-ratio: 280/700) and (max-aspect-ratio: 375/668) {
-        min-height: 70vh;
-      }
-      @media screen and (min-aspect-ratio: 375/667) and (max-aspect-ratio: 414/300) and (max-width:600px) {
-        min-height: 85vh;
-      }
-      @media screen and (min-aspect-ratio: 414/300) {
-        min-height: 80vh;
-      }
-    }
-
     min-height: calc(min(36vw, 36vh));
+    @media all and (max-width: 960px) and (orientation: portrait) {
+      min-height: 30vw;
+    }
+    @media all and (max-width: 600px) and (orientation: portrait) {
+      min-height: 48vw;
+    }
   }
   .calc-height {
     max-height: calc(min(100vh, 100vw) - 70px);
@@ -310,9 +307,12 @@
   import platformImg from '~/assets/images/platform.svg';
   import signUpComputer from '~/assets/images/sign-up-computer.svg';
 
+
   const underlineL = ref(null);
   const underlineR = ref(null);
+  const carousel1 = ref(null);
   const carouselBase = ref(20);
+  // const carouselMinHeight = ref(0);
 
   const painPoints = ref([
     {
@@ -338,7 +338,7 @@
 
   const features = ref([
     { title: 'Help you to categorize expenses.', src: feature1 },
-    { title: 'Budgets and savings accumulative progression.', src: feature2 },
+    { title: 'Budgets and savings<br>accumulative progression.', src: feature2 },
     { title: 'Expenses threshold setting.', src: feature3 },
     { title: 'Financial analysis visualizing.', src: feature4 },
     { title: 'Considerate notification settings.', src: feature5 },
@@ -358,13 +358,17 @@
     link.href = 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;800&display=swap'
     document.head.appendChild(link)
     console.log([...Array(features.length).keys()].map((item, index) => (index - 1) * 20))
-    console.log(underlineL)
+
+    // carouselMinHeight.value = carousel1.value[0].offsetHeight
+    // console.log(carouselMinHeight.value)
   })
 
   function changeImgState(index, type) {
     imgState.index = index;
     imgState.state = type;
   }
+
+
 
   watch(mainIndex, (val,oldVa)=>{
     setTimeout(() => {
