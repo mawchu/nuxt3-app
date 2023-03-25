@@ -3,9 +3,9 @@
     <NuxtWelcome />
   </div> -->
   <div class="bg-white min-h-screen overflow-hidden">
-    <MainHeader />
+    <MainHeader :currentSectionIndexEmit="currentSectionIndex" @scrollTypeEmit="scrollTypeEmit" />
     <section class="bg-top">
-      <main class="flex flex-wrap h-screen flex-col sm:flex-row items-center justify-center px-6">
+      <main class="section flex flex-wrap h-screen flex-col sm:flex-row items-center justify-center px-6">
         <div class="w-[100%] lg:w-[60%] md:order-2 lg:order-1 mt-8 sm:mt-16 flex items-center justify-center">
           <img class="w-[70vw] max-h-[55vh]" src="~/assets/images/main-kv.svg" alt="Financial Assets Website helps solving financial issues, such as spending tracking, bills managing, and setting savings goals to fullfill step by step.">
         </div>
@@ -17,7 +17,7 @@
         </article>
       </main>
 
-      <article class="flex text-center container items-center justify-center mt-16">
+      <article class="section flex text-center container items-center justify-center mt-16">
         <div class="px-4">
           <h2 class="text-subtitle mb-4">We hear your concerns</h2>
           <p class="text-content">You always end up with empty pockets and bank accounts, confused about where your money is going,<br class="hidden md:block" /> with plenty of bills waiting in line to be paid.</p>
@@ -61,7 +61,7 @@
       </article>
     </section>
     <!-- carousel -->
-    <section class="bg-linear relative mt-10">
+    <section class="section bg-linear relative mt-10">
       <article class="flex flex-wrap justify-between container pt-5 sm:py-11  px-6 lg:px-6">
         <div class="inline-block sm:w-[50%] lg:w-auto sm:px-2 lg:px-0 order-2 sm:order-1">
           <p class="text-content mt-0 md:translate-y-[10px]">
@@ -107,7 +107,7 @@
       </div>
       
     </section>
-    <section class="bg-bottom min-h-[calc(100vh-70px)] flex items-center py-6 pt-16 overflow-visible">
+    <section class="section bg-bottom min-h-[calc(100vh-70px)] flex items-center py-6 pt-16 overflow-visible">
       <div class="container sm:px-6 flex flex-wrap items-stretch pb-6">
         <article class="mx-8 order-2 lg:order-1 w-[100%] sm:w-[68%] lg:w-[30%] sm:mx-auto lg:mx-0 bg-primary rounded-t-full text-center flex flex-wrap items-center justify-center min-h-[60vh] md:mx-auto lg:min-h-[70vh] my-auto">
           <div class="flex flex-col items-center">
@@ -352,15 +352,19 @@
   const mainIndex = computed(()=> [...Array(features.value.length).keys()]
     .findIndex((index) => (carouselCounter.value + index)%(features.value.length) === 1));
 
+  const scrollType = ref(null);
+  const currentSectionIndex = ref(0);
+  let sections = reactive([]);
+
   onMounted(() => {
     const link = document.createElement('link')
     link.rel = 'stylesheet'
     link.href = 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;800&display=swap'
     document.head.appendChild(link)
-    console.log([...Array(features.length).keys()].map((item, index) => (index - 1) * 20))
-
-    // carouselMinHeight.value = carousel1.value[0].offsetHeight
-    // console.log(carouselMinHeight.value)
+    sections = document.querySelectorAll('.section');
+    // console.log([...Array(features.length).keys()].map((item, index) => (index - 1) * 20))
+ 
+    sectionObserver ();
   })
 
   function changeImgState(index, type) {
@@ -368,9 +372,7 @@
     imgState.state = type;
   }
 
-
-
-  watch(mainIndex, (val,oldVa)=>{
+  watch(mainIndex, (val,oldVal)=>{
     setTimeout(() => {
       // console.log(underlineR.value.classList, underlineL.value.classList)
       underlineR.value.classList.add('r');
@@ -381,5 +383,45 @@
       }, 400);
     }, 0);
   })
+
+  function scrollTypeEmit (direction) {
+    // console.log('direction', direction)
+    scrollType.value = direction.value;
+  }
+
+  function sectionObserver () {
+    // const opt = { rootMargin: '50px 0px 50px 0px' }
+    const opt = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.5
+    };
+    const observer = new IntersectionObserver(entries => {
+     entries.forEach((entry, index) => {
+      if (entry.isIntersecting) {
+        const target = entry.target;
+        
+        const rect = target.getBoundingClientRect();
+        currentSectionIndex.value = Array.from(sections).indexOf(target);
+        // console.log('confusingIndex', index, 'correctIndex', Array.from(sections).indexOf(target));
+        window.scrollTo({
+          top: rect.top - 80 + window.pageYOffset,
+          left: 0,
+          behavior: 'smooth'
+        });
+      }  
+     })
+    }, opt);
+
+    sections.forEach((section, index) =>  {
+      observer.observe(section);
+    });
+
+  }
+
+  watch(currentSectionIndex, (val,oldVal)=>{
+    console.log(val, oldVal)
+  })
+  
 
 </script>

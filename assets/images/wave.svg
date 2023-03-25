@@ -3,10 +3,14 @@
 <svg version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 439.4 110.6" style="enable-background:new 0 0 439.4 110.6;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:#ED8A7A;}
+	.st0{fill:url(#SVGID_1_);}
 </style>
 <g>
 	<g>
+		<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="218.8" y1="-1.2" x2="218.8" y2="109">
+			<stop  offset="0" style="stop-color:#E19B87"/>
+			<stop  offset="1" style="stop-color:#FFB9A5"/>
+		</linearGradient>
 		<path class="st0" d="M439.8,108.9V-1.2h-442V109h0.4c55.6,0,55.6-19.2,111.2-19.2S164.9,109,220.5,109h1.8
 			c55.6,0,55.6-19.2,111.2-19.2C387.2,89.8,388.8,107.9,439.8,108.9z"/>
 	</g>
