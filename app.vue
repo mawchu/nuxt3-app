@@ -1,11 +1,10 @@
 <template>
-  <!-- <div>
-    <NuxtWelcome />
-  </div> -->
   <div class="bg-white min-h-screen overflow-hidden">
-    <MainHeader :currentSectionIndexEmit="currentSectionIndex" @scrollTypeEmit="scrollTypeEmit" />
+    <MainHeader :currentSectionIndexEmit="currentSectionIndex" @isTriggeredWaveEmit="isTriggeredWaveEmit" @scrollTypeEmit="scrollTypeEmit" @toAnchorEmit="toAnchorEmit" />
+    <!-- kv & pp -->
     <section class="bg-top">
-      <main class="section flex flex-wrap h-screen flex-col sm:flex-row items-center justify-center px-6">
+      <!-- kv -->
+      <main class="section flex flex-wrap min-h-[calc(100vh-90px)] flex-col sm:flex-row items-center justify-center px-6">
         <div class="w-[100%] lg:w-[60%] md:order-2 lg:order-1 mt-8 sm:mt-16 flex items-center justify-center">
           <img class="w-[70vw] max-h-[55vh]" src="~/assets/images/main-kv.svg" alt="Financial Assets Website helps solving financial issues, such as spending tracking, bills managing, and setting savings goals to fullfill step by step.">
         </div>
@@ -17,6 +16,7 @@
         </article>
       </main>
 
+      <!-- pain point -->
       <article class="section flex text-center container items-center justify-center mt-16">
         <div class="px-4">
           <h2 class="text-subtitle mb-4">We hear your concerns</h2>
@@ -24,13 +24,14 @@
           <div class="flex flex-column sm:justify-center sm:flex-row flex-wrap pt-10 sm:pt-10 sm:pb-16 md:pt-16"
             @pointerleave.stop="imgState.index = -1">
             <div v-for="({ origin, hovered, description }, index) in painPoints" :key="index"
-              class="relative w-[100%] sm:w-[50%] lg:w-[33.33%] calc-height flex items-center justify-center first:pr-6 sm:first:pr-9 not-first:not-last:px-6 sm:not-first:not-last:px-9 sm:last:pl-9 py-3"
+              class="relative w-[100%] sm:w-[50%] lg:w-[33.33%] calc-height flex items-center justify-center first:pr-6 sm:first:pr-9 not-first:not-last:px-6 sm:not-first:not-last:px-9 sm:last:pl-9 py-3 cursor-help"
               :class="[
                   (index === 0) ? 'order-2 sm:order-1 lg:order-1' : (index === 1) ? 'order-1 sm:order-3 lg:order-2' : 'order-3 sm:order-2'
                 ]"
               @pointerenter="changeImgState(index, 'hovered')"
               @pointerleave="changeImgState(index, 'origin')">
-              <p v-show="imgState.index === index" class="text-upper w-[80%] absolute mb-3 ease-in-out duration-1000"
+              <p v-show="imgState.index === index"
+                class="uppercase font-bold text-lg md:text-2xl text-secondary w-[80%] absolute mb-3 ease-in-out duration-1000"
                 :class="[
                   (index === 0) || (index === (painPoints.length - 1))
                   ? 'text-left pl-12 sm:pl-15' : 'text-center px-6 sm:px-10',
@@ -60,6 +61,7 @@
         </div>
       </article>
     </section>
+
     <!-- carousel -->
     <section class="section bg-linear relative mt-10">
       <article class="flex flex-wrap justify-between container pt-5 sm:py-11  px-6 lg:px-6">
@@ -69,7 +71,7 @@
             more efficiently and dounbtless, category system visualizes those unseen<br class="hidden sm:block" />
             and potential over wasted costs.
           </p>
-          <div class="text-4xl lg:text-5xl text-secondary mt-3 sm:mt-7 text-right relative z-20">
+          <div class="text-4xl lg:text-5xl text-secondary mt-3 sm:mt-7 text-right relative z-[3]">
             <span @click="(carouselCounter <= 0) ? carouselCounter = (features.length - 1) : carouselCounter--; loopType = 'prev'">
               <font-awesome-icon class="font-2xl first:mr-3" :icon="['fa-regular', 'fa-circle-left']" />
             </span>
@@ -107,19 +109,23 @@
       </div>
       
     </section>
+    <!-- <pre>{{ store.$state }}</pre>
+    <button @click="store.increment()">add me</button> -->
+
+    <!-- sign in / up -->
     <section class="section bg-bottom min-h-[calc(100vh-70px)] flex items-center py-6 pt-16 overflow-visible">
       <div class="container sm:px-6 flex flex-wrap items-stretch pb-6">
         <article class="mx-8 order-2 lg:order-1 w-[100%] sm:w-[68%] lg:w-[30%] sm:mx-auto lg:mx-0 bg-primary rounded-t-full text-center flex flex-wrap items-center justify-center min-h-[60vh] md:mx-auto lg:min-h-[70vh] my-auto">
           <div class="flex flex-col items-center">
             <div class="px-6">
               <h2 class="w-[100%] font-extrabold text-3xl sm:text-4xl text-white mt-3 md:mt-6">Sign up</h2>
-              <p class="font-bold text-xs sm:text-base text-white my-4 sm:px-10">Register your personal financial assistant,building wealth wait for no one!</p>
+              <p class="font-bold text-xs sm:text-base text-white my-4 sm:px-10">Register your personal financial assistant, building wealth wait for no one!</p>
             </div>
             <form class="font-extrabold" action="">
-              <input class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-black" placeholder="Email" type="text">
-              <input class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-black" placeholder="Password" type="text">
+              <input v-model="email" class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-secondary" placeholder="Email" type="text">
+              <input v-model="password" class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-secondary" placeholder="Password" type="password">
             </form>
-            <GoButton class="py-3" type="dark" align="center"/>
+            <GoButton class="py-3" type="dark" align="center" @click="registerUser()"/>
             <div class="inline-block font-bold">
               <div class="w-[100%] h-[1px] bg-black my-2"></div>
               Sign in by Google
@@ -131,11 +137,15 @@
         </figure>
       </div>
     </section>
+    <!-- <div id="animation"></div> -->
     <MainFooter></MainFooter>
   </div>
 </template>
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Karla:wght@200;400;800&display=swap');
+  :root {
+    --header-height: 70px;
+  }
   * {
     font-family: 'Karla', sans-serif;
   }
@@ -143,6 +153,9 @@
     font-family: 'Karla';
     font-display: swap;
     src: url('/Karla.woff2') format('woff2');
+  }
+  .section {
+    padding-top: calc(var(--header-height) + 30px);
   }
   .bg {
     &-top {
@@ -288,6 +301,15 @@
   .calc-height {
     max-height: calc(min(100vh, 100vw) - 70px);
   }
+  /* Styles for placeholder */
+  input::placeholder {
+    letter-spacing: 1px;
+  }
+
+  /* Styles for password value */
+  input[type="password"] {
+    letter-spacing: 5px;
+  }
 </style>
 <script setup>
   import { ref, onMounted } from 'vue';
@@ -306,13 +328,14 @@
   import moneyStay from '~/assets/images/money-stay.svg';
   import platformImg from '~/assets/images/platform.svg';
   import signUpComputer from '~/assets/images/sign-up-computer.svg';
-
+  // import lottie from 'lottie-web';
+  // import animationData from '~/assets/lottie/animation.json';
+  // import { whatever } from './stores/sign';
+  // const store = whatever();
 
   const underlineL = ref(null);
   const underlineR = ref(null);
-  const carousel1 = ref(null);
   const carouselBase = ref(20);
-  // const carouselMinHeight = ref(0);
 
   const painPoints = ref([
     {
@@ -345,7 +368,6 @@
   ])
 
   const loopType = 'next';
-
   const carouselPositions = computed(() => [...Array(features.value.length).keys()]
     .map((item, index) => index === 2 ? carouselBase.value * 2 : index === 0 ? (index - 1) * carouselBase.value : index === 1 ? 0 : 40 + (index - 2) * carouselBase.value));
   const carouselCounter = ref(1);
@@ -355,6 +377,9 @@
   const scrollType = ref(null);
   const currentSectionIndex = ref(0);
   let sections = reactive([]);
+  const isTriggeredWave = ref(false);
+  const email = ref('mawchu0412@gmail.com');
+  const password = ref('123456');
 
   onMounted(() => {
     const link = document.createElement('link')
@@ -363,7 +388,14 @@
     document.head.appendChild(link)
     sections = document.querySelectorAll('.section');
     // console.log([...Array(features.length).keys()].map((item, index) => (index - 1) * 20))
- 
+    // const container = document.getElementById('animation');
+    // const anim = lottie.loadAnimation({
+    //   container: container,
+    //   renderer: 'svg',
+    //   loop: true,
+    //   autoplay: true,
+    //   animationData: animationData,
+    // });
     sectionObserver ();
   })
 
@@ -400,15 +432,15 @@
      entries.forEach((entry, index) => {
       if (entry.isIntersecting) {
         const target = entry.target;
-        
         const rect = target.getBoundingClientRect();
         currentSectionIndex.value = Array.from(sections).indexOf(target);
         // console.log('confusingIndex', index, 'correctIndex', Array.from(sections).indexOf(target));
-        window.scrollTo({
-          top: rect.top - 80 + window.pageYOffset,
-          left: 0,
-          behavior: 'smooth'
-        });
+        if (isTriggeredWave.value === false) 
+          window.scrollTo({
+            top: rect.top  + window.pageYOffset,
+            left: 0,
+            behavior: 'smooth'
+          });
       }  
      })
     }, opt);
@@ -419,9 +451,19 @@
 
   }
 
-  watch(currentSectionIndex, (val,oldVal)=>{
-    console.log(val, oldVal)
-  })
+  function toAnchorEmit (index) {
+    sections[index].scrollIntoView({
+      behavior: 'smooth'
+    });
+  }
   
+  function isTriggeredWaveEmit (boolean) {
+    isTriggeredWave.value = boolean;
+  }
+
+  async function registerUser () {
+    const credentials = await register(email.value, password.value);
+    await console.log('credentials', credentials)
+  }
 
 </script>

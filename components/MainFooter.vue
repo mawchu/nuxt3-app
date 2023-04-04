@@ -3,7 +3,7 @@
       <!-- 1 -->
       <nav class="order-2 col-span-1 sm:col-span-2 md:order-1 md:col-span-4 lg:col-span-3 my-6">
         <ul class="sm:flex justify-around items-center h-[100%] text-xl">
-          <li v-for="({ title }, index) in menuList" class="font-bold text-secondary">{{ title }}</li>
+          <li v-for="({ title }, index) in menuList" class="relative font-bold text-secondary z-0">{{ title }}</li>
         </ul>
       </nav>
       <div class="hidden lg:block lg:col-span-1 lg:order-2"></div>

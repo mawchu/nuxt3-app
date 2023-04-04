@@ -1,13 +1,17 @@
 <template>
-     <figure class="relative hidden lg:flex items-center justify-between w-[80px] lg:w-[100px] btn-go group cursor-pointer">
-        <img class="menu-icon transition duration-150 ease-in-out"
+     <figure class="relative mx-auto md:mx-[unset] right-0 flex items-center justify-between w-[100px] cursor-pointer group">
+        <img class="menu-icon transition duration-150 ease-in-out w-[50px] group:"
             :class="[
-                align === 'right' ? 'group-hover:translate-x-[50px]' : align === 'center' ? 'group-hover:translate-x-[25px]' : ''
+                (align === 'right') && isActive
+                    ? 'group-hover:translate-x-[50px]' : (align === 'center') && isActive
+                    ? 'group-hover:translate-x-[25px]' : ''
             ]"
             :src="type === 'dark' ? gDark : gLight" alt="">
-        <img class="menu-icon transition duration-150 ease-in-out"
+        <img class="menu-icon transition duration-150 ease-in-out w-[50px]"
             :class="[
-                align === 'right' ? '' : align === 'center' ? 'group-hover:-translate-x-[25px]' : ''
+                (align === 'right')
+                    ? '' : (align === 'center') && isActive
+                    ? 'group-hover:-translate-x-[25px]' : ''
             ]"
             :src="type === 'dark' ? oDark : oLight" alt="">
         <font-awesome-icon class="mr-2 text-2xl absolute opacity-0 group-hover:opacity-100 transition duration-150 ease-in-out"
@@ -36,6 +40,10 @@ const props = defineProps({
     align: {
         required: false,
         default: 'right'
+    },
+    isActive: {
+        required: false,
+        default: true
     }
 })
 </script>

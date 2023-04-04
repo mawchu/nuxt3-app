@@ -1,65 +1,86 @@
 <template>
-    <nav ref="tabs" class="header-fix ease-in-out duration-300 px-6 lg:px-10"
+    <nav ref="tabs" class="header-fix overflow-visible"
         :class="[
-            // scrollDistance > 0 ? 'bg-gradient-to-b from-white to-white/10' : '',
-            scrollType === 'down' || isTriggeredWave  ? 'active' : '',
+            scrollType === 'down' || isTriggeredWave  ? 'wave' : '',
+            itemShow ? 'h-[100vh]' : 'h-[70px]'
         ]">
-        <div class="w-[90%] md:w-5/6 lg:w-2/3">
-            <ol class="flex sm:justify-between text-lg font-semibold text-secondary">
+        <div class="w-[100%] h-[100%] md:w-4/5 lg:w-2/3 flex flex-col">
+            <ol class="flex flex-col md:flex-row md:justify-between text-lg font-semibold text-secondary">
                 <li class="lg:ml-0 origin-top-left ease-linear duration-100 flex items-center"
-                    :class="[ scrollDistance > 0 && scrollType === 'down' ? 'scale-150' : '' ]">
-                    <figure v-if="scrollType === 'down' || isTriggeredWave" class="menu-icon">
+                    :class="[
+                        (scrollDistance > 0 && scrollType === 'down') && (deivceWidth >= breakpointMd) ? 'scale-125' : ''
+                    ]">
+                    <figure v-if="(scrollType === 'down' && deivceWidth >= breakpointMd) ||
+                        (isTriggeredWave && (deivceWidth >= breakpointMd)) ||
+                        (itemShow && deivceWidth < breakpointMd)" class="menu-icon">
                         <img class="w-[100%] h-[100%] object-contain" :src="logoWhite" alt="">
                     </figure>
                     <figure v-else class="menu-icon">
                         <img class="w-[100%] h-[100%] object-contain" :src="logo" alt="">
                     </figure>
-                    <!-- <figure class="menu-icon">
-                        <img class="w-[100%] h-[100%] object-contain" :src="logo" alt="">
-                    </figure> -->
                 </li>
-                <!-- <li v-for="({ title, icon }, index) in menu" :key="index" class="relative hidden sm:flex items-center item linear duration-300"
-                    :class="[ scrollDistance > 0 && scrollType === 'down' ? 'text-white' : 'text-secondary' ]">
-                    <span class="hidden"><font-awesome-icon class="mr-2" :icon="icon" /></span>{{ title }}
-                </li> -->
                 <li v-for="({ title, icon }, index) in menu" :key="index"
-                    class="relative w-[100%] h-[70px] hidden md:flex flex-col items-center item linear duration-300 group  overflow-hidden"
+                    class="menu-item md:flex flex-col relative w-[100%] h-[70px] items-center item linear duration-300 group overflow-hidden mt-6 md:mt-0"
                     :class="[
-                        scrollType === 'down' || isTriggeredWave ? 'text-white' : 'text-secondary',
-                        (triggered(index) && scrollType === 'down') || (triggered(index) && isTriggeredWave) ? 'active' : '',
-                        (index === hoveredIndex  && isTriggeredWave) || (triggered(index) && scrollType === 'up') ? 'hover' : ''
+                        (triggeredByObsered(index) && scrollType === 'down') ||
+                        (triggeredByObsered(index) && isTriggeredWave) ? 'active' : '',
+                        (triggeredByHovered(index) && isTriggeredWave) ||
+                        (triggeredByObsered(index) && scrollType === 'up') ? 'hover' : '',
+                        (triggeredByObsered(index) && isTriggeredWave) ? 'float' : '',
+                        itemShow ? 'flex' : 'hidden'
                     ]"
-                    @pointerenter="hovered($event, 'enter', index)"
-                    @pointerleave="hovered($event, 'leave', index)">
-                    <div class="absolute top-[calc(50%-15px)] left-0 h-[120px] w-[100%] flex flex-col flex-wrap justify-between items-center group-hover:-translate-y-[calc(120px-30px)] pointer-events-none duration-150 ease-in-out overflow-hidden group-hover:floating"
+                    @pointerenter="pointerEventAction(index)"
+                    @pointerleave="pointerEventAction(index)"
+                    @pointerdown="toAnchor(index)">
+                    <div class="absolute top-[calc(50%-15px)] left-0 h-[120px] w-[100%] flex flex-col flex-wrap justify-between items-center pointer-events-none duration-150 ease-in-out overflow-hidden group-hover:floating"
                         :class="[
-                            triggered(index) ? '-translate-y-[calc(120px-30px)]' : ''
+                            triggeredByObsered(index) ? '-translate-y-[calc(120px-30px)]' : '',
+                            triggeredByHovered(index) && isTriggeredWave ? '-translate-y-[calc(120px-30px)]' : '',
                         ]">
-                        <h2 class="w-[100%] text-center">{{ title }}</h2>
-                        <span class="text-secondary"
-                            :class="[ (triggered(index) && scrollType === 'down') ||
-                            (triggered(index) && isTriggeredWave)
-                                ? 'text-secondary' : 'text-white' ]"><font-awesome-icon :icon="icon" /></span>
+                        <h2 class="w-[100%] text-center"
+                            :class="[
+                                (scrollType === 'down') || isTriggeredWave || (deivceWidth < 768)
+                                    ? 'text-white' : 'text-secondary'
+                            ]">
+                            {{ title }}
+                        </h2>
+                        
+                        <span class="text-2xl duration-100 ease-linear"
+                            :class="[ (triggeredByObsered(index) && (scrollType === 'down')) ||
+                                triggeredByObsered(index) && isTriggeredWave  ? 'text-secondary' : 'text-white'
+                            ]">
+                            <font-awesome-icon :icon="icon" />
+                        </span>
                     </div>
                 </li>
             </ol>
+            <GoButton class="md:hidden mt-8" align="center"
+                :type="scrollType === 'down' || isTriggeredWave ? 'dark' : 'light'"
+                :class="[ itemShow ? 'flex' : 'hidden' ]"/>
         </div>
-       <GoButton :type="scrollType === 'down' || isTriggeredWave ? 'dark' : 'light'" />
-       <!-- <GoButton :type="'light'" /> -->
-        <div class="lg:hidden">
-            <div class="flex flex-wrap justify-center items-center w-[30px] h-full px-[30px] group">
+       <GoButton class="hidden md:flex z-[20]"
+        :type="scrollType === 'down' || isTriggeredWave ? 'dark' : 'light'" />
+
+       <!-- 漢堡 -->
+        <div class="hamburger-wrapper"
+            @click.prevent="controlMenu()">
+            <div class="group">
                 <div>
-                    <div v-for="n in 2" :key="n" class="hamburger-bar transition duration-150 ease-in-out group-hover:first:translate-y-[calc(5px/2+1px)] origin-center group-hover:last:translate-y-[calc(-5px/2-1px)] group-hover:first:rotate-[25deg] group-hover:last:rotate-[-25deg]"></div>
+                    <div v-for="n in 2" :key="n" class="hamburger-bar transition duration-150 ease-in-out origin-center"
+                    :class="[ itemShow ? 'first:translate-y-[calc(5px/2+1px)] last:translate-y-[calc(-5px/2-1px)] first:rotate-[25deg] last:rotate-[-25deg]' : '' ]"></div>
                 </div>
             </div>
         </div>
-        
     </nav>
     
 </template>
 <style lang="scss">
- @mixin animate($duration, $animate) {
-    animation: $animate $duration ease-out infinite alternate-reverse;
+$max-width-md: 768px;
+$max-width-xs: 400px;
+
+@mixin animate($duration, $animate, $function) {
+    animation: $animate $duration $function infinite alternate;
+    // animation-duration: alternate;
     @keyframes wave {
         0% {
             background-position: 0;
@@ -70,28 +91,30 @@
     }
     @keyframes float {
         0% {
-            transform: translateY(20px);
+            transform: translateY(15px);
         }
         100% {
-            transform: translateY(-10px);
+            transform: translateY(15px);
+        }
+        50% {
+            transform: translateY(5px);
         }
     }
 }
+
 .header-fix {
-    --nav-height: 70px;
-    @apply flex items-center justify-between fixed top-0 left-0 h-[var(--nav-height)] w-[100%];
-    
+    --nav-height-md: 70px;
+    // --nav-height-sm: 100vh;
+    @apply flex justify-between fixed top-0 left-0 md:h-[var(--nav-height-md)] w-[100%] ease-in-out duration-300 pt-3 md:pt-0 px-3 lg:px-10 md:bg-[unset];
+    z-index: 14;
     li, div {
         @apply cursor-pointer;
-        z-index: 5;
+        z-index: 15;
     }
+    // 球
     .item, li {
-        .floating {
-            @include animate(1s, float);
-        }
-        // 球
         &::after {
-            --circle-size: calc(var(--nav-height) * .8);
+            --circle-size: calc(var(--nav-height-md) * .8);
             content: " ";
             top: calc(50% - var(--circle-size)/2);
             left: calc(50% - var(--circle-size)/2);
@@ -101,25 +124,67 @@
             z-index: -2;
             transform: scale(0);
             opacity: 0;
-            pointer-events: none;
+            // pointer-events: none;
             @apply rounded-full ease-in-out duration-300;
 
         }
+
         &.active::after, &.hover::after {
             transform: scale(1);
             opacity: 100;
             @apply text-secondary;
         } 
-        &.hover::after {
-            @apply bg-secondary;
+        &.active {
+            &::after {
+                transition: all .5s;
+                background: linear-gradient(180deg, rgba(232,255,220,1) 48%, rgba(252,247,172,1) 100%);
+                // box-shadow: 0 0 15px #e2937b;
+            }
         }
-        &.active::after {
-            background: linear-gradient(180deg, rgba(232,255,220,1) 48%, rgba(252,247,172,1) 100%);
-            box-shadow: 0 0 15px #e2937b;
+
+        &.hover {
+            &::after {
+                @apply bg-secondary;
+            }
+        }
+
+        &.float {
+            @include animate(1s, float, linear);
+            &::after {
+                background: linear-gradient(
+                    180deg, 
+                    rgba(232,255,220,1) 48%, 
+                    rgba(252,247,172,1) 80%,
+                    rgba(255, 255, 255, 0) 100%
+                );
+            }
+        }
+    }
+
+
+    // 海浪
+    // 海浪第一層
+    &::after {
+        z-index: 12;
+        background-image: url(~/assets/images/wave.svg);
+        @media all and (max-width: #{$max-width-md}) {
+            background-image: url(~/assets/images/wave-m.svg);
+            inset: 0;
+        }
+    }
+    // 海浪第二層
+    &::before {
+        z-index: 13;
+        inset: -10px;
+        background-image: url(~/assets/images/wave-1.svg);
+        backdrop-filter: saturate(120%);
+        mix-blend-mode: overlay;
+        @media all and (max-width: #{$max-width-md}) {
+            background-image: url(~/assets/images/wave-1-m.svg);
+            inset: 0;
         }
         
     }
-
     &::after, &::before{
         transition: .5s ease-in-out;
         content: " ";
@@ -127,52 +192,53 @@
         inset: -5px;
         pointer-events: none;
         transform: scale(0);
-        background-size: contain;
+
         background-repeat: repeat-x;
         transform: translateY(-100px);
-    }
-    // 海浪第一層
-    &::after {
-        z-index: -2;
-        background-image: url(~/assets/images/wave.svg);
         background-position: bottom left;
-    }
-    // 海浪第二層
-    &::before {
-        z-index: -1;
-        inset: -10px;
-        background-image: url(~/assets/images/wave-1.svg);
-        background-position: -10px left;
-        background-size: contain;
-        backdrop-filter: saturate(120%);
-        mix-blend-mode: overlay;
-        
-    }
-    &.active {
-        &::after, &::before {
-            transform: translateY(5px);
+        @media all and (max-width: #{$max-width-md}) {
+            background-position: 100px left;
+            background-size: contain;
+        }
+        @media all and (max-width: #{$max-width-xs}) {
+            background-position: 100px left;
+            background-size: cover;
         }
     }
-   
 
+    &.wave {
+        &::after, &::before {
+            transform: translateY(0);
+            @media all and (max-width: #{$max-width-md}) {
+                transform: translateY(-100px);
+            }
+        }
+        
+    }
     
     &:hover {
         &::after {
-            @include animate(6s, wave);
+            @include animate(6s, wave, ease-out);
         }
         &::before {
-            @include animate(12s, wave);
+            @include animate(12s, wave,  ease-out);
         }
     }
+
 }
 
+.hamburger {
+    &-wrapper {
+        --hamburgur-padding: 16px;
+        @apply absolute top-[calc(var(--hamburgur-padding)*1)] right-0 md:hidden p-4;
+    }
 
+    &-bar {
+        @apply w-[24px] h-[2px] bg-gray-800 rounded-sm;
 
-.hamburger-bar {
-    @apply w-[24px] h-[2px] bg-gray-800 rounded-sm;
-
-    &:not(:last-child) {
-        margin-bottom: 5px;
+        &:not(:last-child) {
+            margin-bottom: 5px;
+        }
     }
 }
 nav {
@@ -180,9 +246,9 @@ nav {
 }
 .menu-icon {
     --menu-icon-size: 50px;
-    @media all and (max-width: 600px) {
-        --menu-icon-size: 40px;
-    }
+    // @media all and (max-width: 600px) {
+    //     --menu-icon-size: 40px;
+    // }
     width: var(--menu-icon-size);
     height: var(--menu-icon-size);
 }
@@ -196,40 +262,66 @@ import logo from '~/assets/images/logo.svg';
 import logoWhite from '~/assets/images/logo-w.svg';
 import { menuList } from '~/globalDatas';
 
+
 const scrollDistance = ref(0)
 const scrollRecord = reactive([])
 const menu = ref(menuList)
 const tabs = ref(null);
-const emit = defineEmits(['scrollTypeEmit']);
+const emit = defineEmits(['scrollTypeEmit', 'toAnchorEmit', 'isTriggeredWaveEmit']);
 const props = defineProps(['currentSectionIndexEmit'])
 const hoveredIndex = ref(0);
-
+const itemShow = ref(false);
+const menuClickTimer = ref(0);
+const deivceWidth = ref(0);
+const breakpointMd = ref(768);
 let isTriggeredWave = ref(false);
 
+const toggleTriggerWave = (boolean) => {
+    isTriggeredWave.value = boolean;
+    emit('isTriggeredWaveEmit', isTriggeredWave.value);
+}
+
 onMounted(() => {
-  document.addEventListener('scroll', () => {
-    scrollDistance.value = window.scrollY;
-    scrollRecord.push(window.scrollY)
-    if(scrollRecord.length > 2) {
-        scrollRecord.splice(0, scrollRecord.length-2);
-    }
-    emit('scrollTypeEmit', scrollType);
-  });
+    deivceWidth.value = window.innerWidth;
+    window.addEventListener('resize', () => {
+        deivceWidth.value = window.innerWidth;
+    })
+    document.addEventListener('scroll', () => {
+        scrollDistance.value = window.scrollY;
+        scrollRecord.push(window.scrollY)
+        if(scrollRecord.length > 2) {
+            scrollRecord.splice(0, scrollRecord.length-2);
+        }
+        emit('scrollTypeEmit', scrollType);
+    });
 
-  tabs.value.addEventListener('pointerenter', (e) => {
-    isTriggeredWave.value = true;
-  })
+    tabs.value.addEventListener('pointerenter', (e) => {
+        toggleTriggerWave(true);
+    })
 
-  tabs.value.addEventListener('pointerleave', (e) => {
-    isTriggeredWave.value = false;
-  })
+    tabs.value.addEventListener('pointerleave', (e) => {
+        toggleTriggerWave(false);
+    })
 })
 const scrollType = computed(() => scrollRecord[0] < scrollRecord[1] ? 'down' : 'up');
 
-function triggered (index) {
+function controlMenu () {
+    menuClickTimer.value ++;
+    itemShow.value = menuClickTimer.value % 2 === 1;
+    toggleTriggerWave(menuClickTimer.value % 2 === 1);
+}
+
+function triggeredByObsered (index) {
     return (props.currentSectionIndexEmit === index);
 }
-function hovered (event, type, index) {
+function triggeredByHovered (index) {
+    return (hoveredIndex.value === index);
+}
+function pointerEventAction (index) {
     hoveredIndex.value = index;
 }
+function toAnchor (index) {
+    emit('toAnchorEmit', index);
+}
+
 </script>
