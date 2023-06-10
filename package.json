@@ -23,6 +23,8 @@
     "@pinia/nuxt": "^0.4.7",
     "firebase": "^9.19.1",
     "firebase-auth": "^0.1.2",
-    "lottie-web": "^5.10.2"
+    "lottie-web": "^5.10.2",
+    "pinia": "^2.0.33",
+    "vue-router": "^4.2.2"
   }
 }

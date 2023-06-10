@@ -62,12 +62,17 @@
         :type="scrollType === 'down' || isTriggeredWave ? 'dark' : 'light'" />
 
        <!-- 漢堡 -->
-        <div class="hamburger-wrapper"
+        <div class="hamburger-wrapper group"
             @click.prevent="controlMenu()">
-            <div class="group">
+            <div>
                 <div>
-                    <div v-for="n in 2" :key="n" class="hamburger-bar transition duration-150 ease-in-out origin-center"
-                    :class="[ itemShow ? 'first:translate-y-[calc(5px/2+1px)] last:translate-y-[calc(-5px/2-1px)] first:rotate-[25deg] last:rotate-[-25deg]' : '' ]"></div>
+                    <div v-for="n in 2" :key="n" class="hamburger-bar origin-center last:w-[24px] group-hover:first:w-[24px]  "
+                    :class="[
+                        itemShow ? `first:translate-y-[calc(5px/2+1px)]
+                        last:translate-y-[calc(-5px/2-1px)]
+                        first:w-[24px]
+                        first:rotate-[25deg]
+                        last:rotate-[-25deg]` : 'first:w-[12px]' ]"></div>
                 </div>
             </div>
         </div>
@@ -234,16 +239,15 @@ $max-width-xs: 400px;
     }
 
     &-bar {
-        @apply w-[24px] h-[2px] bg-gray-800 rounded-sm;
-
+        transition: ease-in-out .3s;
+        @apply h-[2px] bg-gray-800 rounded-sm;
+        
         &:not(:last-child) {
             margin-bottom: 5px;
         }
     }
 }
-nav {
-    z-index: 999;
-}
+
 .menu-icon {
     --menu-icon-size: 50px;
     // @media all and (max-width: 600px) {
@@ -279,6 +283,7 @@ let isTriggeredWave = ref(false);
 const toggleTriggerWave = (boolean) => {
     isTriggeredWave.value = boolean;
     emit('isTriggeredWaveEmit', isTriggeredWave.value);
+    // console.log(isTriggeredWave.value)
 }
 
 onMounted(() => {
@@ -300,8 +305,9 @@ onMounted(() => {
     })
 
     tabs.value.addEventListener('pointerleave', (e) => {
-        toggleTriggerWave(false);
+        if (deivceWidth.value >= breakpointMd.value) toggleTriggerWave(false);
     })
+    
 })
 const scrollType = computed(() => scrollRecord[0] < scrollRecord[1] ? 'down' : 'up');
 

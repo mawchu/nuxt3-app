@@ -119,17 +119,18 @@
           <div class="flex flex-col items-center">
             <div class="px-6">
               <h2 class="w-[100%] font-extrabold text-3xl sm:text-4xl text-white mt-3 md:mt-6">Sign up</h2>
-              <p class="font-bold text-xs sm:text-base text-white my-4 sm:px-10">Register your personal financial assistant, building wealth wait for no one!</p>
+              <p class="font-bold text-xs sm:text-base text-white my-4 px-10 md:px-10">Register your personal financial assistant, building wealth wait for no one!</p>
             </div>
             <form class="font-extrabold" action="">
               <input v-model="email" class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-secondary" placeholder="Email" type="text">
               <input v-model="password" class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-secondary" placeholder="Password" type="password">
             </form>
             <GoButton class="py-3" type="dark" align="center" @click="registerUser()"/>
-            <div class="inline-block font-bold">
+            <div class="inline-block font-bold" @click="signInGoogle()">
               <div class="w-[100%] h-[1px] bg-black my-2"></div>
               Sign in by Google
             </div>
+            <pre>{{ authStore.$state.isLoggedIn }}</pre>
           </div>
         </article>
         <figure class="order-1 pb-10 sm:pb-0 w-[100%] lg:w-[70%] px-8 max-h-[70vw] md:max-h-[45vh] md:mb-6 lg:max-h-[80vh] sm:pl-8">
@@ -328,10 +329,12 @@
   import moneyStay from '~/assets/images/money-stay.svg';
   import platformImg from '~/assets/images/platform.svg';
   import signUpComputer from '~/assets/images/sign-up-computer.svg';
+  import { userAuthStore } from '~/stores/userAuth.js'
+ 
   // import lottie from 'lottie-web';
   // import animationData from '~/assets/lottie/animation.json';
-  // import { whatever } from './stores/sign';
-  // const store = whatever();
+
+
 
   const underlineL = ref(null);
   const underlineR = ref(null);
@@ -381,6 +384,8 @@
   const email = ref('mawchu0412@gmail.com');
   const password = ref('123456');
 
+  const authStore = userAuthStore ();
+
   onMounted(() => {
     const link = document.createElement('link')
     link.rel = 'stylesheet'
@@ -397,6 +402,7 @@
     //   animationData: animationData,
     // });
     sectionObserver ();
+
   })
 
   function changeImgState(index, type) {
@@ -463,6 +469,11 @@
 
   async function registerUser () {
     const credentials = await register(email.value, password.value);
+    await console.log('credentials', credentials)
+  }
+
+  async function signInGoogle () {
+    const credentials = await signInByGoogle ();
     await console.log('credentials', credentials)
   }
 

@@ -6,6 +6,8 @@ export default defineNuxtPlugin(nuxtApp => {
     const config = useRuntimeConfig();
     const firebaseConfig = {
         apiKey: config.FIREBASE_API_KEY,
+        authDomain: "financial-asistant.firebaseapp.com",
+        projectId: "financial-asistant"
     };
 
     const app = initializeApp(firebaseConfig);

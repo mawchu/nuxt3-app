@@ -1,5 +1,4 @@
 import dotenv from 'dotenv'
-
 dotenv.config({
     path: process.env.NODE_ENV === 'development' ? '.env.development' : '.env'
 })
@@ -14,7 +13,17 @@ export default defineNuxtConfig({
             FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
         }
       },
-    modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
+    modules: [
+        '@nuxtjs/tailwindcss',
+        '@pinia/nuxt'
+    ],
+    imports: {
+        dirs: ['./stores'],
+    },
+
+    pinia: {
+        autoImports: ['defineStore', 'acceptHMRUpdate'],
+    },
     css: ['@fortawesome/fontawesome-svg-core/styles.css'],
     build: { transpile: ['@fortawesome/vue-fontawesome'], }
 })
