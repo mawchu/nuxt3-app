@@ -59,7 +59,10 @@
                 :class="[ itemShow ? 'flex' : 'hidden' ]"/>
         </div>
        <GoButton class="hidden md:flex z-[20]"
-        :type="scrollType === 'down' || isTriggeredWave ? 'dark' : 'light'" />
+        :type="scrollType === 'down' || isTriggeredWave ? 'dark' : 'light'" 
+        @pointerenter="pointerEventAction(menu.length-1)"
+        @pointerleave="pointerEventAction(menu.length-1)"
+        @pointerdown="toAnchor(menu.length-1)"/>
 
        <!-- 漢堡 -->
         <div class="hamburger-wrapper group"
