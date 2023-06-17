@@ -142,8 +142,8 @@
     <MainFooter></MainFooter>
   </div>
 </template>
-<style lang="scss">
-@import url('https://fonts.googleapis.com/css2?family=Karla:wght@200;400;800&display=swap');
+<style lang="scss" scoped>
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@100;200;300;400;500;600;700;800&display=swap');
   :root {
     --header-height: 70px;
   }

@@ -8,11 +8,11 @@
             <ol class="flex flex-col md:flex-row md:justify-between text-lg font-semibold text-secondary">
                 <li class="lg:ml-0 origin-top-left ease-linear duration-100 flex items-center"
                     :class="[
-                        (scrollDistance > 0 && scrollType === 'down') && (deivceWidth >= breakpointMd) ? 'scale-125' : ''
+                        (scrollDistance > 0 && scrollType === 'down') && (deviceWidth >= breakpointMd) ? 'scale-125' : ''
                     ]">
-                    <figure v-if="(scrollType === 'down' && deivceWidth >= breakpointMd) ||
-                        (isTriggeredWave && (deivceWidth >= breakpointMd)) ||
-                        (itemShow && deivceWidth < breakpointMd)" class="menu-icon">
+                    <figure v-if="(scrollType === 'down' && deviceWidth >= breakpointMd) ||
+                        (isTriggeredWave && (deviceWidth >= breakpointMd)) ||
+                        (itemShow && deviceWidth < breakpointMd)" class="menu-icon">
                         <img class="w-[100%] h-[100%] object-contain" :src="logoWhite" alt="">
                     </figure>
                     <figure v-else class="menu-icon">
@@ -39,7 +39,7 @@
                         ]">
                         <h2 class="w-[100%] text-center"
                             :class="[
-                                (scrollType === 'down') || isTriggeredWave || (deivceWidth < 768)
+                                (scrollType === 'down') || isTriggeredWave || (deviceWidth < 768)
                                     ? 'text-white' : 'text-secondary'
                             ]">
                             {{ title }}
@@ -82,7 +82,8 @@
     </nav>
     
 </template>
-<style lang="scss">
+<style lang="scss" scoped>
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@100;200;300;400;500;600;700;800&display=swap');
 $max-width-md: 768px;
 $max-width-xs: 400px;
 
@@ -279,7 +280,7 @@ const props = defineProps(['currentSectionIndexEmit'])
 const hoveredIndex = ref(0);
 const itemShow = ref(false);
 const menuClickTimer = ref(0);
-const deivceWidth = ref(0);
+const deviceWidth = ref(0);
 const breakpointMd = ref(768);
 let isTriggeredWave = ref(false);
 
@@ -290,9 +291,9 @@ const toggleTriggerWave = (boolean) => {
 }
 
 onMounted(() => {
-    deivceWidth.value = window.innerWidth;
+    deviceWidth.value = window.innerWidth;
     window.addEventListener('resize', () => {
-        deivceWidth.value = window.innerWidth;
+        deviceWidth.value = window.innerWidth;
     })
     document.addEventListener('scroll', () => {
         scrollDistance.value = window.scrollY;
@@ -308,7 +309,7 @@ onMounted(() => {
     })
 
     tabs.value.addEventListener('pointerleave', (e) => {
-        if (deivceWidth.value >= breakpointMd.value) toggleTriggerWave(false);
+        if (deviceWidth.value >= breakpointMd.value) toggleTriggerWave(false);
     })
     
 })
