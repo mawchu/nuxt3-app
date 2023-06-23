@@ -6,10 +6,12 @@ export const userAuthStore = defineStore('auth', {
     state: () => ({
       userData: null,
       isLoggedIn: false,
-      authBy: null
+      authBy: null,
+      currentComponent: null
     }),
     getters: {
       getLoginState: (state) => state.isLoggedIn,
+      getCurrentComponent: (state) => state.currentComponent
     },
     actions: {
       setUser (user) {
@@ -25,6 +27,9 @@ export const userAuthStore = defineStore('auth', {
       logout () {
         this.userData = null;
         this.isLoggedIn = false;
+      },
+      setCurrentComponent (component) {
+        this.currentComponent = component;
       }
     },
   })

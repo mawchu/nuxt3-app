@@ -1,3 +1,4 @@
+
 export const menuList = [
     { title: 'Top', icon: ['fas', 'house'] },
     { title: 'Pain points', icon: ['fas', 'person-circle-question'] },

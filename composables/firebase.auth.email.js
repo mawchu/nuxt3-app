@@ -5,12 +5,15 @@ import {
     onAuthStateChanged // 讀取身份信息
 } from "firebase/auth";
 
+import { createUserDocument } from "./firebase.firestore";
+
 import { pinia } from '~/stores/userAuth.js'
 import { userAuthStore } from '~/stores/userAuth.js'
 
 // const userAuth = userAuthStore(pinia);
 
-export async function register (email, password) {
+
+export async function register ($db, email, password) {
     const auth = getAuth();
     const credentials = await createUserWithEmailAndPassword(
         auth,
@@ -19,7 +22,9 @@ export async function register (email, password) {
     )
         .then(async(userCredential) => {
             // Signed in 
+            const { user } = userCredential;
             await login(email, password);
+            await createUserDocument($db, user);
             return userCredential;
             // ...
         })
@@ -61,17 +66,16 @@ export async function login (email, password) {
     return credentials;
 }
 
-export function getUserDatas () {
+export function getUserDatas ($db) {
     const auth = getAuth();
     const { isLoggedIn, userData, login, logout } = userAuthStore();
 
     // 偵測攔截器
     onAuthStateChanged(auth, (user) => {
-     
         if (user) {
             // User is signed in, see docs for a list of available properties
             // https://firebase.google.com/docs/reference/js/firebase.User
-            const uid = user.uid;
+            
             console.log('uid', user, 'is sign in')
             login(user);
             return user

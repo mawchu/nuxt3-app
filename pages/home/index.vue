@@ -1,14 +1,20 @@
 <template>
   <div class="bg-white min-h-screen overflow-hidden">
-    <MainHeader :currentSectionIndexEmit="currentSectionIndex" @isTriggeredWaveEmit="isTriggeredWaveEmit" @scrollTypeEmit="scrollTypeEmit" @toAnchorEmit="toAnchorEmit" />
+    <MainHeader
+      :currentSectionIndex="currentSectionIndex"
+      :unableToHoverSection="unableToHoverSection"
+      @isTriggeredWaveEmit="isTriggeredWaveEmit"
+      @scrollTypeEmit="scrollTypeEmit"
+      @toAnchorEmit="toAnchorEmit"
+      @unableToHoverSectionEmit="unableToHoverSectionEmit" />
     <!-- kv & pp -->
     <section class="bg-top">
       <!-- kv -->
-      <main class="section flex flex-wrap min-h-[calc(100vh-90px)] flex-col sm:flex-row items-center justify-center px-6">
-        <div class="w-[100%] lg:w-[60%] md:order-2 lg:order-1 mt-8 sm:mt-16 flex items-center justify-center">
+      <main class="section flex flex-wrap min-h-screen flex-col sm:flex-row items-center justify-center px-6">
+        <div class="w-[100%] lg:w-[60%] md:order-2 lg:order-1 mt-8 sm:pt-16 flex items-center justify-center">
           <img class="w-[70vw] max-h-[55vh]" src="~/assets/images/main-kv.svg" alt="Financial Assets Website helps solving financial issues, such as spending tracking, bills managing, and setting savings goals to fullfill step by step.">
         </div>
-        <article class="w-[100%] lg:w-[40%] md:order-1 sm:mt-16 lg:order-2 text-secondary text-center lg:text-left py-8 sm:py-0">
+        <article class="w-[100%] lg:w-[40%] md:order-1 sm:pt-16 lg:order-2 text-secondary text-center lg:text-left py-8 sm:py-0">
           <h1 class="text-title mb-6">Financial<br />Assistant</h1>
           <h2 class="text-content">
             Tracks your spending<br />for healthy financial affairs.
@@ -17,10 +23,10 @@
       </main>
 
       <!-- pain point -->
-      <article class="section flex text-center container items-center justify-center mt-16">
+      <article class="section flex text-center container items-center justify-center pt-16 md:pt-[15vh]">
         <div class="px-4">
           <h2 class="text-subtitle mb-4">We hear your concerns</h2>
-          <p class="text-content">You always end up with empty pockets and bank accounts, confused about where your money is going,<br class="hidden md:block" /> with plenty of bills waiting in line to be paid.</p>
+          <p class="text-content">Always end up with empty pockets and bank accounts,<br class="hidden sm:block" />  confused about where the money went,<br class="hidden lg:block" /> with plenty of bills waiting in line to be paid.</p>
           <div class="flex flex-column sm:justify-center sm:flex-row flex-wrap pt-10 sm:pt-10 sm:pb-16 md:pt-16"
             @pointerleave.stop="imgState.index = -1">
             <div v-for="({ origin, hovered, description }, index) in painPoints" :key="index"
@@ -63,15 +69,17 @@
     </section>
 
     <!-- carousel -->
-    <section class="section bg-linear relative mt-10">
-      <article class="flex flex-wrap justify-between container pt-5 sm:py-11  px-6 lg:px-6">
+    <section class="section relative pt-10 md:mt-[4vh]">
+      <div class="w-[100%] h-[6vh]"></div>
+      <div class="bg-linear">
+        <article class="flex flex-wrap justify-between container pt-5 sm:py-11  px-6 lg:px-6">
         <div class="inline-block sm:w-[50%] lg:w-auto sm:px-2 lg:px-0 order-2 sm:order-1">
           <p class="text-content mt-0 md:translate-y-[10px]">
             Financial Assistant help you deal with your expenses and budgets<br class="hidden sm:block" />
             more efficiently and dounbtless, category system visualizes those unseen<br class="hidden sm:block" />
             and potential over wasted costs.
           </p>
-          <div class="text-4xl lg:text-5xl text-secondary mt-3 sm:mt-7 text-right relative z-[3]">
+          <div class="text-4xl lg:text-5xl text-secondary mt-3 sm:mt-7 text-right relative z-[3] cursor-pointer">
             <span @click="(carouselCounter <= 0) ? carouselCounter = (features.length - 1) : carouselCounter--; loopType = 'prev'">
               <font-awesome-icon class="font-2xl first:mr-3" :icon="['fa-regular', 'fa-circle-left']" />
             </span>
@@ -107,16 +115,17 @@
           </div>
         </article>
       </div>
+      </div>
       
     </section>
     <!-- <pre>{{ store.$state }}</pre>
     <button @click="store.increment()">add me</button> -->
 
     <!-- sign in / up -->
-    <section class="section bg-bottom min-h-[calc(100vh-70px)] flex items-center py-6 pt-16 overflow-visible">
+    <section class="section bg-bottom min-h-[calc(100vh-70px)] flex items-center py-6 pt-16 md:pt-[15vh] overflow-visible">
       <div class="container sm:px-6 flex flex-wrap items-stretch pb-6">
-        <article class="mx-8 order-2 lg:order-1 w-[100%] sm:w-[68%] lg:w-[30%] sm:mx-auto lg:mx-0 bg-primary rounded-t-full text-center flex flex-wrap items-center justify-center min-h-[60vh] md:mx-auto lg:min-h-[70vh] my-auto">
-          <div class="flex flex-col items-center">
+        <article class="mx-8 order-2 lg:order-1 sm:w-[68%] lg:w-[30%] sm:mx-auto lg:mx-0 bg-primary rounded-t-full text-center flex flex-wrap items-center justify-center md:mx-auto my-auto min-h-[60vh] lg:min-h-[70vh] w-[100%]">
+          <div v-if="!isLoggedIn" class="flex flex-col items-center max-w-[400px]">
             <div class="px-6">
               <h2 class="w-[100%] font-extrabold text-3xl sm:text-4xl text-white mt-3 md:mt-6">Sign up</h2>
               <p class="font-bold text-xs sm:text-base text-white my-4 px-10 md:px-10">Register your personal financial assistant, building wealth wait for no one!</p>
@@ -130,7 +139,15 @@
               <div class="w-[100%] h-[1px] bg-black my-2"></div>
               Sign in by Google
             </div>
-            <pre>{{ authStore.$state.isLoggedIn }}</pre>
+            <pre>{{ isLoggedIn }}</pre>
+          </div>
+          <div v-else class="max-w-[500px]">
+            <div class="px-6">
+              <figure class="text-white text-4xl"><font-awesome-icon :icon="['fas', 'address-book']" /></figure>
+              <h2 class="w-[100%] font-extrabold text-3xl sm:text-4xl text-white mt-3 md:mt-6">Welcome!</h2>
+              <p class="font-bold text-xs sm:text-base text-white my-4 pb-8 px-10 md:px-10 border-b-[1px] border-white">Check out your personal financial assistant, building wealth wait for no one!</p>
+              <GoButton class="py-3 mx-auto md:mx-auto" type="dark" align="center" @click="toUserCenter"/>
+            </div>
           </div>
         </article>
         <figure class="order-1 pb-10 sm:pb-0 w-[100%] lg:w-[70%] px-8 max-h-[70vw] md:max-h-[45vh] md:mb-6 lg:max-h-[80vh] sm:pl-8">
@@ -143,20 +160,8 @@
   </div>
 </template>
 <style lang="scss" scoped>
-@import url('https://fonts.googleapis.com/css2?family=Karla:wght@100;200;300;400;500;600;700;800&display=swap');
   :root {
     --header-height: 70px;
-  }
-  * {
-    font-family: 'Karla', sans-serif;
-  }
-  @font-face {
-    font-family: 'Karla';
-    font-display: swap;
-    src: url('/Karla.woff2') format('woff2');
-  }
-  .section {
-    padding-top: calc(var(--header-height) + 30px);
   }
   .bg {
     &-top {
@@ -314,6 +319,7 @@
 </style>
 <script setup>
   import { ref, onMounted } from 'vue';
+  import { storeToRefs } from 'pinia'
   import painPoints1 from '~/assets/images/pain-point-1-default.svg';
   import painPoints1h from '~/assets/images/pain-point-1-hover.svg';
   import painPoints2 from '~/assets/images/pain-point-2-default.svg';
@@ -330,10 +336,12 @@
   import platformImg from '~/assets/images/platform.svg';
   import signUpComputer from '~/assets/images/sign-up-computer.svg';
   import { userAuthStore } from '~/stores/userAuth.js'
- 
+  const { $db } = useNuxtApp();
   // import lottie from 'lottie-web';
   // import animationData from '~/assets/lottie/animation.json';
-
+  const authStore = userAuthStore ();
+  const { isLoggedIn, currentComponent} = storeToRefs(authStore);
+  const { setCurrentComponent } = userAuthStore();
 
 
   const underlineL = ref(null);
@@ -381,10 +389,10 @@
   const currentSectionIndex = ref(0);
   let sections = reactive([]);
   const isTriggeredWave = ref(false);
+  let unableToHoverSection = ref(false);
+
   const email = ref('mawchu0412@gmail.com');
   const password = ref('123456');
-
-  const authStore = userAuthStore ();
 
   onMounted(() => {
     const link = document.createElement('link')
@@ -441,9 +449,9 @@
         const rect = target.getBoundingClientRect();
         currentSectionIndex.value = Array.from(sections).indexOf(target);
         // console.log('confusingIndex', index, 'correctIndex', Array.from(sections).indexOf(target));
-        if (isTriggeredWave.value === false) 
+        if (isTriggeredWave.value === false && unableToHoverSection.value === false) 
           window.scrollTo({
-            top: rect.top  + window.pageYOffset,
+            top: rect.top + window.pageYOffset,
             left: 0,
             behavior: 'smooth'
           });
@@ -466,15 +474,22 @@
   function isTriggeredWaveEmit (boolean) {
     isTriggeredWave.value = boolean;
   }
+  function unableToHoverSectionEmit (boolean) {
+    unableToHoverSection.value = boolean;
+  }
 
   async function registerUser () {
-    const credentials = await register(email.value, password.value);
+    const credentials = await register($db, email.value, password.value);
     await console.log('credentials', credentials)
   }
 
   async function signInGoogle () {
     const credentials = await signInByGoogle ();
     await console.log('credentials', credentials)
+  }
+
+  function toUserCenter () {
+    setCurrentComponent ('userCenter');
   }
 
 </script>

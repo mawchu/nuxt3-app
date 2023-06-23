@@ -16,7 +16,7 @@
                         <img class="w-[100%] h-[100%] object-contain" :src="logoWhite" alt="">
                     </figure>
                     <figure v-else class="menu-icon">
-                        <img class="w-[100%] h-[100%] object-contain" :src="logo" alt="">
+                         <img class="w-[100%] h-[100%] object-contain" :src="logo" alt="">
                     </figure>
                 </li>
                 <li v-for="({ title, icon }, index) in menu" :key="index"
@@ -31,13 +31,13 @@
                     ]"
                     @pointerenter="pointerEventAction(index)"
                     @pointerleave="pointerEventAction(index)"
-                    @pointerdown="toAnchor(index)">
+                    @pointerdown="toAnchor(index), controlMenu()">
                     <div class="absolute top-[calc(50%-15px)] left-0 h-[120px] w-[100%] flex flex-col flex-wrap justify-between items-center pointer-events-none duration-150 ease-in-out overflow-hidden group-hover:floating"
                         :class="[
                             triggeredByObsered(index) ? '-translate-y-[calc(120px-30px)]' : '',
                             triggeredByHovered(index) && isTriggeredWave ? '-translate-y-[calc(120px-30px)]' : '',
                         ]">
-                        <h2 class="w-[100%] text-center"
+                        <h2 class="w-[100%] text-center lg:text-2xl font-extrabold"
                             :class="[
                                 (scrollType === 'down') || isTriggeredWave || (deviceWidth < 768)
                                     ? 'text-white' : 'text-secondary'
@@ -56,13 +56,16 @@
             </ol>
             <GoButton class="md:hidden mt-8" align="center"
                 :type="scrollType === 'down' || isTriggeredWave ? 'dark' : 'light'"
-                :class="[ itemShow ? 'flex' : 'hidden' ]"/>
+                :class="[ itemShow ? 'flex' : 'hidden' ]"
+                @pointerenter="pointerEventAction(menu.length-1)"
+                @pointerleave="pointerEventAction(menu.length-1)"
+                @pointerdown="toAnchor(menu.length-1), controlMenu()"/>
         </div>
        <GoButton class="hidden md:flex z-[20]"
         :type="scrollType === 'down' || isTriggeredWave ? 'dark' : 'light'" 
         @pointerenter="pointerEventAction(menu.length-1)"
         @pointerleave="pointerEventAction(menu.length-1)"
-        @pointerdown="toAnchor(menu.length-1)"/>
+        @pointerdown="toAnchor(menu.length-1), controlMenu()"/>
 
        <!-- 漢堡 -->
         <div class="hamburger-wrapper group"
@@ -83,7 +86,6 @@
     
 </template>
 <style lang="scss" scoped>
-@import url('https://fonts.googleapis.com/css2?family=Karla:wght@100;200;300;400;500;600;700;800&display=swap');
 $max-width-md: 768px;
 $max-width-xs: 400px;
 
@@ -251,16 +253,6 @@ $max-width-xs: 400px;
         }
     }
 }
-
-.menu-icon {
-    --menu-icon-size: 50px;
-    // @media all and (max-width: 600px) {
-    //     --menu-icon-size: 40px;
-    // }
-    width: var(--menu-icon-size);
-    height: var(--menu-icon-size);
-}
-
 </style>
 
 <script setup>
@@ -275,14 +267,15 @@ const scrollDistance = ref(0)
 const scrollRecord = reactive([])
 const menu = ref(menuList)
 const tabs = ref(null);
-const emit = defineEmits(['scrollTypeEmit', 'toAnchorEmit', 'isTriggeredWaveEmit']);
-const props = defineProps(['currentSectionIndexEmit'])
+const emit = defineEmits(['scrollTypeEmit', 'toAnchorEmit', 'isTriggeredWaveEmit', 'unableToHoverSectionEmit']);
+const props = defineProps(['currentSectionIndex'])
 const hoveredIndex = ref(0);
 const itemShow = ref(false);
 const menuClickTimer = ref(0);
 const deviceWidth = ref(0);
 const breakpointMd = ref(768);
 let isTriggeredWave = ref(false);
+let unableToHover = ref(false);
 
 const toggleTriggerWave = (boolean) => {
     isTriggeredWave.value = boolean;
@@ -316,13 +309,18 @@ onMounted(() => {
 const scrollType = computed(() => scrollRecord[0] < scrollRecord[1] ? 'down' : 'up');
 
 function controlMenu () {
+    emit('unableToHoverSectionEmit', true);
     menuClickTimer.value ++;
     itemShow.value = menuClickTimer.value % 2 === 1;
     toggleTriggerWave(menuClickTimer.value % 2 === 1);
+    
+    setTimeout(() => {
+        emit('unableToHoverSectionEmit', false);
+    }, 800)
 }
 
 function triggeredByObsered (index) {
-    return (props.currentSectionIndexEmit === index);
+    return (props.currentSectionIndex === index);
 }
 function triggeredByHovered (index) {
     return (hoveredIndex.value === index);
