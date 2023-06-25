@@ -57,15 +57,17 @@
             <GoButton class="md:hidden mt-8" align="center"
                 :type="scrollType === 'down' || isTriggeredWave ? 'dark' : 'light'"
                 :class="[ itemShow ? 'flex' : 'hidden' ]"
-                @pointerenter="pointerEventAction(menu.length-1)"
-                @pointerleave="pointerEventAction(menu.length-1)"
-                @pointerdown="toAnchor(menu.length-1), controlMenu()"/>
+                @click="loginButton('click')"
+                @pointerenter="loginButton('enter')"
+                @pointerleave="loginButton('leave')"
+                @pointerdown="loginButton('down')"/>
         </div>
        <GoButton class="hidden md:flex z-[20]"
         :type="scrollType === 'down' || isTriggeredWave ? 'dark' : 'light'" 
-        @pointerenter="pointerEventAction(menu.length-1)"
-        @pointerleave="pointerEventAction(menu.length-1)"
-        @pointerdown="toAnchor(menu.length-1), controlMenu()"/>
+        @click="loginButton('click')"
+        @pointerenter="loginButton('enter')"
+        @pointerleave="loginButton('leave')"
+        @pointerdown="loginButton('down')"/>
 
        <!-- 漢堡 -->
         <div class="hamburger-wrapper group"
@@ -267,8 +269,15 @@ const scrollDistance = ref(0)
 const scrollRecord = reactive([])
 const menu = ref(menuList)
 const tabs = ref(null);
-const emit = defineEmits(['scrollTypeEmit', 'toAnchorEmit', 'isTriggeredWaveEmit', 'unableToHoverSectionEmit']);
-const props = defineProps(['currentSectionIndex'])
+const emit = defineEmits([
+    'scrollTypeEmit',
+    'toAnchorEmit',
+    'isTriggeredWaveEmit',
+    'unableToHoverSectionEmit',
+    'toUserCenterEmit',
+    'setComponentUserCenterEmit'
+]);
+const props = defineProps(['currentSectionIndex', 'isLoggedIn'])
 const hoveredIndex = ref(0);
 const itemShow = ref(false);
 const menuClickTimer = ref(0);
@@ -295,7 +304,7 @@ onMounted(() => {
             scrollRecord.splice(0, scrollRecord.length-2);
         }
         emit('scrollTypeEmit', scrollType);
-    });
+    }, { passive: true });
 
     tabs.value.addEventListener('pointerenter', (e) => {
         toggleTriggerWave(true);
@@ -330,6 +339,12 @@ function pointerEventAction (index) {
 }
 function toAnchor (index) {
     emit('toAnchorEmit', index);
+}
+
+function loginButton (event) {
+    if (props.isLoggedIn === true && event === 'click') emit('setComponentUserCenterEmit');
+    if (event === 'enter' || event === 'leave') pointerEventAction(menu.length-1);
+    if (event === 'down') toAnchor(menu.value.length-1);
 }
 
 </script>

@@ -4,8 +4,13 @@ import {
     GoogleAuthProvider,
 } from "firebase/auth";
 
+import { createUserDocument } from "./firebase.firestore";
+
+import { getUserDatas } from "./firebase.auth.email";
+
 
 export async function signInByGoogle () {
+    console.log(124)
     const provider = new GoogleAuthProvider();
     provider.addScope('https://www.googleapis.com/auth/admin.directory.device.mobile.readonly');
 
@@ -13,16 +18,19 @@ export async function signInByGoogle () {
     auth.languageCode = 'it';
 
     const credentials = await signInWithPopup(auth, provider)
-        .then((result) => {
+        .then(async (result) => {
             // This gives you a Google Access Token. You can use it to access the Google API.
             const credential = GoogleAuthProvider.credentialFromResult(result);
             const token = credential.accessToken;
             // The signed-in user info.
             const user = result.user;
+
             // IdP data available using getAdditionalUserInfo(result)
             // ...
-            console.log('result')
-            return result;
+            await getUserDatas();
+            await createUserDocument($db, user);
+
+            return user;
         })
         .catch((error) => {
             // Handle Errors here.

@@ -2,11 +2,12 @@
   <div class="bg-white min-h-screen overflow-hidden">
     <MainHeader
       :currentSectionIndex="currentSectionIndex"
-      :unableToHoverSection="unableToHoverSection"
+      :isLoggedIn="isLoggedIn"
       @isTriggeredWaveEmit="isTriggeredWaveEmit"
       @scrollTypeEmit="scrollTypeEmit"
       @toAnchorEmit="toAnchorEmit"
-      @unableToHoverSectionEmit="unableToHoverSectionEmit" />
+      @unableToHoverSectionEmit="unableToHoverSectionEmit"
+      @setComponentUserCenterEmit="toUserCenter"/>
     <!-- kv & pp -->
     <section class="bg-top">
       <!-- kv -->
@@ -135,11 +136,12 @@
               <input v-model="password" class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-secondary" placeholder="Password" type="password">
             </form>
             <GoButton class="py-3" type="dark" align="center" @click="registerUser()"/>
-            <div class="inline-block font-bold" @click="signInGoogle()">
-              <div class="w-[100%] h-[1px] bg-black my-2"></div>
-              Sign in by Google
+            <div class="relative inline-block font-bold cursor-pointer hover:scale-[120%] hover:font-extrabold transition-all duration-200" @click="signInGoogle()">
+              <div class="w-[100%] h-[1px] bg-black my-3"></div>
+              <span class="absolute -top-[3px] left-[calc(50%-16px)] bg-primary px-2">or</span>
+              <span class="transition-all duration-200">Sign in by Google</span>
             </div>
-            <pre>{{ isLoggedIn }}</pre>
+            <!-- <pre>{{ isLoggedIn }}</pre> -->
           </div>
           <div v-else class="max-w-[500px]">
             <div class="px-6">

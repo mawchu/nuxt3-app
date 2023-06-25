@@ -21,11 +21,15 @@
     "@fortawesome/vue-fontawesome": "^3.0.3",
     "@nuxt-modules/lazy-load": "^0.2.0",
     "@pinia/nuxt": "^0.4.7",
+    "dayjs": "^1.11.8",
+    "echarts": "^5.4.2",
     "firebase": "^9.19.1",
     "firebase-auth": "^0.1.2",
     "lottie-web": "^5.10.2",
     "pinia": "^2.0.33",
+    "pleasejs": "^0.4.2",
     "tailwind-scrollbar": "^3.0.4",
+    "vue-echarts": "^6.6.0",
     "vue-router": "^4.2.2"
   }
 }

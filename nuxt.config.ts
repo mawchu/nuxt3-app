@@ -25,5 +25,5 @@ export default defineNuxtConfig({
         autoImports: ['defineStore', 'acceptHMRUpdate'],
     },
     css: ['@fortawesome/fontawesome-svg-core/styles.css'],
-    build: { transpile: ['@fortawesome/vue-fontawesome'], }
+    build: { transpile: ['@fortawesome/vue-fontawesome', /echarts/], }
 })

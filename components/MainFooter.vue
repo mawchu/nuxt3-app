@@ -20,12 +20,15 @@
             <font-awesome-icon class="mr-2" :icon="['fab', 'instagram']" />
             <font-awesome-icon class="mr-2" :icon="['fas', 'envelope']" />
           </div>
-          <p class="text-xs font-bold text-secondary my-4">Copyright © 2023 Financial Assistant Company.<br class="hidden lg:block">All rights reserved.</p>
+          <client-only>
+            <p class="text-xs font-bold text-secondary my-4">Copyright © {{ dayjs().year() }} Financial Assistant.<br class="hidden lg:block">All rights reserved.</p>
+          </client-only>
         </div>
       </article>
     </footer>
 </template>
 <script setup>
+  import * as dayjs from 'dayjs';
   import { menuList } from '~/globalDatas';
   import logo from '~/assets/images/logo.svg';
 
