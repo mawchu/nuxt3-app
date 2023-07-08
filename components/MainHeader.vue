@@ -4,7 +4,7 @@
             scrollType === 'down' || isTriggeredWave  ? 'wave' : '',
             itemShow ? 'h-[100vh]' : 'h-[70px]'
         ]">
-        <div class="w-[100%] h-[100%] md:w-4/5 lg:w-2/3 flex flex-col">
+        <div class="w-full h-[100%] md:w-4/5 lg:w-2/3 flex flex-col">
             <ol class="flex flex-col md:flex-row md:justify-between text-lg font-semibold text-secondary">
                 <li class="lg:ml-0 origin-top-left ease-linear duration-100 flex items-center"
                     :class="[
@@ -13,14 +13,14 @@
                     <figure v-if="(scrollType === 'down' && deviceWidth >= breakpointMd) ||
                         (isTriggeredWave && (deviceWidth >= breakpointMd)) ||
                         (itemShow && deviceWidth < breakpointMd)" class="menu-icon">
-                        <img class="w-[100%] h-[100%] object-contain" :src="logoWhite" alt="">
+                        <img class="w-full h-[100%] object-contain" :src="logoWhite" alt="">
                     </figure>
                     <figure v-else class="menu-icon">
-                         <img class="w-[100%] h-[100%] object-contain" :src="logo" alt="">
+                         <img class="w-full h-[100%] object-contain" :src="logo" alt="">
                     </figure>
                 </li>
                 <li v-for="({ title, icon }, index) in menu" :key="index"
-                    class="menu-item md:flex flex-col relative w-[100%] h-[70px] items-center item linear duration-300 group overflow-hidden mt-6 md:mt-0"
+                    class="menu-item md:flex flex-col relative w-full h-[70px] items-center item linear duration-300 group overflow-hidden mt-6 md:mt-0"
                     :class="[
                         (triggeredByObsered(index) && scrollType === 'down') ||
                         (triggeredByObsered(index) && isTriggeredWave) ? 'active' : '',
@@ -32,12 +32,12 @@
                     @pointerenter="pointerEventAction(index)"
                     @pointerleave="pointerEventAction(index)"
                     @pointerdown="toAnchor(index), controlMenu()">
-                    <div class="absolute top-[calc(50%-15px)] left-0 h-[120px] w-[100%] flex flex-col flex-wrap justify-between items-center pointer-events-none duration-150 ease-in-out overflow-hidden group-hover:floating"
+                    <div class="absolute top-[calc(50%-15px)] left-0 h-[120px] w-full flex flex-col flex-wrap justify-between items-center pointer-events-none duration-150 ease-in-out overflow-hidden group-hover:floating"
                         :class="[
                             triggeredByObsered(index) ? '-translate-y-[calc(120px-30px)]' : '',
                             triggeredByHovered(index) && isTriggeredWave ? '-translate-y-[calc(120px-30px)]' : '',
                         ]">
-                        <h2 class="w-[100%] text-center lg:text-2xl font-extrabold"
+                        <h2 class="w-full text-center lg:text-2xl font-extrabold"
                             :class="[
                                 (scrollType === 'down') || isTriggeredWave || (deviceWidth < 768)
                                     ? 'text-white' : 'text-secondary'
@@ -118,7 +118,7 @@ $max-width-xs: 400px;
 .header-fix {
     --nav-height-md: 70px;
     // --nav-height-sm: 100vh;
-    @apply flex justify-between fixed top-0 left-0 md:h-[var(--nav-height-md)] w-[100%] ease-in-out duration-300 pt-3 md:pt-0 px-3 lg:px-10 md:bg-[unset];
+    @apply flex justify-between fixed top-0 left-0 md:h-[var(--nav-height-md)] w-full ease-in-out duration-300 pt-3 md:pt-0 px-3 lg:px-10 md:bg-[unset];
     z-index: 14;
     li, div {
         @apply cursor-pointer;

@@ -9,13 +9,13 @@
       </nav>
       <div class="hidden lg:block lg:col-span-1 lg:order-2"></div>
       <!-- 2 -->
-      <figure class="order-1 col-span-1 sm:col-span-1 md:order-2 md:col-span-1 w-[100%] h-[100%] flex items-center md:justify-center sm:pl-[26px] md:pl-0">
+      <figure class="order-1 col-span-1 sm:col-span-1 md:order-2 md:col-span-1 w-full h-[100%] flex items-center md:justify-center sm:pl-[26px] md:pl-0">
         <img class="w-[60px] md:w-[60%] h-[100px] object-contain" :src="logo" alt="">
       </figure>
       <!-- 3 -->
       <article class="order-3 col-span-2 sm:col-span-2 md:col-span-2 sm:pl-4 pt-2 h-[100%] flex items-center justify-center md:justify-start">
         <div class="px-3 sm:flex sm:flex-wrap sm:items-center text-center sm:text-start">
-          <div class="flex flex-wrap justify-center sm:justify-start text-2xl text-secondary md:w-[100%]">
+          <div class="flex flex-wrap justify-center sm:justify-start text-2xl text-secondary md:w-full">
             <font-awesome-icon class="mr-2" :icon="['fab', 'facebook']" />
             <font-awesome-icon class="mr-2" :icon="['fab', 'instagram']" />
             <font-awesome-icon class="mr-2" :icon="['fas', 'envelope']" />

@@ -25,6 +25,7 @@
     "echarts": "^5.4.2",
     "firebase": "^9.19.1",
     "firebase-auth": "^0.1.2",
+    "js-cookie": "^3.0.5",
     "lottie-web": "^5.10.2",
     "pinia": "^2.0.33",
     "pleasejs": "^0.4.2",

@@ -12,10 +12,10 @@
     <section class="bg-top">
       <!-- kv -->
       <main class="section flex flex-wrap min-h-screen flex-col sm:flex-row items-center justify-center px-6">
-        <div class="w-[100%] lg:w-[60%] md:order-2 lg:order-1 mt-8 sm:pt-16 flex items-center justify-center">
+        <div class="w-full lg:w-[60%] md:order-2 lg:order-1 mt-8 sm:pt-16 flex items-center justify-center">
           <img class="w-[70vw] max-h-[55vh]" src="~/assets/images/main-kv.svg" alt="Financial Assets Website helps solving financial issues, such as spending tracking, bills managing, and setting savings goals to fullfill step by step.">
         </div>
-        <article class="w-[100%] lg:w-[40%] md:order-1 sm:pt-16 lg:order-2 text-secondary text-center lg:text-left py-8 sm:py-0">
+        <article class="w-full lg:w-[40%] md:order-1 sm:pt-16 lg:order-2 text-secondary text-center lg:text-left py-8 sm:py-0">
           <h1 class="text-title mb-6">Financial<br />Assistant</h1>
           <h2 class="text-content">
             Tracks your spending<br />for healthy financial affairs.
@@ -31,7 +31,7 @@
           <div class="flex flex-column sm:justify-center sm:flex-row flex-wrap pt-10 sm:pt-10 sm:pb-16 md:pt-16"
             @pointerleave.stop="imgState.index = -1">
             <div v-for="({ origin, hovered, description }, index) in painPoints" :key="index"
-              class="relative w-[100%] sm:w-[50%] lg:w-[33.33%] calc-height flex items-center justify-center first:pr-6 sm:first:pr-9 not-first:not-last:px-6 sm:not-first:not-last:px-9 sm:last:pl-9 py-3 cursor-help"
+              class="relative w-full sm:w-[50%] lg:w-[33.33%] calc-height flex items-center justify-center first:pr-6 sm:first:pr-9 not-first:not-last:px-6 sm:not-first:not-last:px-9 sm:last:pl-9 py-3 cursor-help"
               :class="[
                   (index === 0) ? 'order-2 sm:order-1 lg:order-1' : (index === 1) ? 'order-1 sm:order-3 lg:order-2' : 'order-3 sm:order-2'
                 ]"
@@ -48,18 +48,18 @@
               <figure class="relative h-[26vh] md:h-[100%]"
                 :class="[ index === 1 || index === (painPoints.length - 1)
                   ? 'translate-x-[5vw] sm:translate-x-0' : '-translate-x-[5vw] sm:translate-x-0' ]" :data-index="index">
-                <img class="flex object-contain w-[100%] h-[100%] ease-in-out duration-300 absolute"
+                <img class="flex object-contain w-full h-[100%] ease-in-out duration-300 absolute"
                   :class="[
                     (imgState.index === index) && (imgState.index !== -1) ? 'opacity-0' : 'opacity-100',
                     (index === 1) ? '' : 'order-1 sm:order-2',
                   ]"
                   :src="origin" alt="">
-                <img class="d-block object-contain w-[100%] h-[100%]"
+                <img class="d-block object-contain w-full h-[100%]"
                   :src="hovered" alt="">
-                <img v-show="index === 1" class="absolute object-contain w-[100%] h-[100%] animate-float" style="top: 0; left: 0"
+                <img v-show="index === 1" class="absolute object-contain w-full h-[100%] animate-float" style="top: 0; left: 0"
                   :class="[(imgState.index === index) && (imgState.index !== -1) ? 'opacity-0' : 'opacity-100']"
                 :src="moneyFly" alt="">
-                <img v-show="index === 1" class="absolute object-contain w-[100%] h-[100%]" style="top: 0; left: 0"
+                <img v-show="index === 1" class="absolute object-contain w-full h-[100%]" style="top: 0; left: 0"
                   :class="[(imgState.index === index) && (imgState.index !== -1) ? 'opacity-0' : 'opacity-100']"
                 :src="moneyStay" alt="">
               </figure>
@@ -71,7 +71,7 @@
 
     <!-- carousel -->
     <section class="section relative pt-10 md:mt-[4vh]">
-      <div class="w-[100%] h-[6vh]"></div>
+      <div class="w-full h-[6vh]"></div>
       <div class="bg-linear">
         <article class="flex flex-wrap justify-between container pt-5 sm:py-11  px-6 lg:px-6">
         <div class="inline-block sm:w-[50%] lg:w-auto sm:px-2 lg:px-0 order-2 sm:order-1">
@@ -103,11 +103,11 @@
           ]"
           :style="`left: ${loopType === 'next' && (carouselCounter + index)%features.length === 0
               ? '100' : carouselPositions[Math.abs((carouselCounter + index)%features.length)]}%; height: min(36vw, 36vh)`">
-          <img class="w-[100%] h-[100%]" :src="src" alt="">
+          <img class="w-full h-[100%]" :src="src" alt="">
         </figure>
         <img class="absolute w-[40%] px-[4vw] opacity-80 bottom-[20px] mb-6 sm:mb-0" :src="platformImg">
-        <article class="absolute flex justify-center sm:justify-end font-medium h-30 bottom-[20px] w-[calc(60%+12px)] sm:w-[calc(80%+3vw)] md:w-[calc(80%+3vw)] lg:w-[100%]">
-          <div class="w-[100%] sm:w-[60%] linear flex justify-center text-center">
+        <article class="absolute flex justify-center sm:justify-end font-medium h-30 bottom-[20px] w-[calc(60%+12px)] sm:w-[calc(80%+3vw)] md:w-[calc(80%+3vw)] lg:w-full">
+          <div class="w-full sm:w-[60%] linear flex justify-center text-center">
             <div class="relative inline-block">
               <div class="text-xs sm:text-sm md:text-xl lg:text-2xl" style="" v-html="features[mainIndex].title"></div>
               <div ref="underlineL" class="absolute -bottom-[2px] h-[1px] bg-black left-[50%] animate-underline"></div>
@@ -125,10 +125,10 @@
     <!-- sign in / up -->
     <section class="section bg-bottom min-h-[calc(100vh-70px)] flex items-center py-6 pt-16 md:pt-[15vh] overflow-visible">
       <div class="container sm:px-6 flex flex-wrap items-stretch pb-6">
-        <article class="mx-8 order-2 lg:order-1 sm:w-[68%] lg:w-[30%] sm:mx-auto lg:mx-0 bg-primary rounded-t-full text-center flex flex-wrap items-center justify-center md:mx-auto my-auto min-h-[60vh] lg:min-h-[70vh] w-[100%]">
-          <div v-if="!isLoggedIn" class="flex flex-col items-center max-w-[400px]">
+        <article class="mx-8 order-2 lg:order-1 sm:w-[68%] lg:w-[30%] sm:mx-auto lg:mx-0 bg-primary rounded-t-full text-center flex flex-wrap items-center justify-center md:mx-auto my-auto min-h-[60vh] lg:min-h-[70vh] w-full">
+          <div v-show="!isLoggedIn" class="flex flex-col items-center max-w-[400px]">
             <div class="px-6">
-              <h2 class="w-[100%] font-extrabold text-3xl sm:text-4xl text-white mt-3 md:mt-6">Sign up</h2>
+              <h2 class="w-full font-extrabold text-3xl sm:text-4xl text-white mt-3 md:mt-6">Sign up</h2>
               <p class="font-bold text-xs sm:text-base text-white my-4 px-10 md:px-10">Register your personal financial assistant, building wealth wait for no one!</p>
             </div>
             <form class="font-extrabold" action="">
@@ -137,23 +137,23 @@
             </form>
             <GoButton class="py-3" type="dark" align="center" @click="registerUser()"/>
             <div class="relative inline-block font-bold cursor-pointer hover:scale-[120%] hover:font-extrabold transition-all duration-200" @click="signInGoogle()">
-              <div class="w-[100%] h-[1px] bg-black my-3"></div>
+              <div class="w-full h-[1px] bg-black my-3"></div>
               <span class="absolute -top-[3px] left-[calc(50%-16px)] bg-primary px-2">or</span>
               <span class="transition-all duration-200">Sign in by Google</span>
             </div>
             <!-- <pre>{{ isLoggedIn }}</pre> -->
           </div>
-          <div v-else class="max-w-[500px]">
+          <div v-show="isLoggedIn" class="max-w-[500px]">
             <div class="px-6">
               <figure class="text-white text-4xl"><font-awesome-icon :icon="['fas', 'address-book']" /></figure>
-              <h2 class="w-[100%] font-extrabold text-3xl sm:text-4xl text-white mt-3 md:mt-6">Welcome!</h2>
+              <h2 class="w-full font-extrabold text-3xl sm:text-4xl text-white mt-3 md:mt-6">Welcome!</h2>
               <p class="font-bold text-xs sm:text-base text-white my-4 pb-8 px-10 md:px-10 border-b-[1px] border-white">Check out your personal financial assistant, building wealth wait for no one!</p>
               <GoButton class="py-3 mx-auto md:mx-auto" type="dark" align="center" @click="toUserCenter"/>
             </div>
           </div>
         </article>
-        <figure class="order-1 pb-10 sm:pb-0 w-[100%] lg:w-[70%] px-8 max-h-[70vw] md:max-h-[45vh] md:mb-6 lg:max-h-[80vh] sm:pl-8">
-          <img class="w-[100%] h-[100%] object-contain" :src="signUpComputer" alt="">
+        <figure class="order-1 pb-10 sm:pb-0 w-full lg:w-[70%] px-8 max-h-[70vw] md:max-h-[45vh] md:mb-6 lg:max-h-[80vh] sm:pl-8">
+          <img class="w-full h-[100%] object-contain" :src="signUpComputer" alt="">
         </figure>
       </div>
     </section>
@@ -320,6 +320,7 @@
   }
 </style>
 <script setup>
+  // import Cookies from 'js-cookie'
   import { ref, onMounted } from 'vue';
   import { storeToRefs } from 'pinia'
   import painPoints1 from '~/assets/images/pain-point-1-default.svg';
@@ -342,9 +343,8 @@
   // import lottie from 'lottie-web';
   // import animationData from '~/assets/lottie/animation.json';
   const authStore = userAuthStore ();
-  const { isLoggedIn, currentComponent} = storeToRefs(authStore);
-  const { setCurrentComponent } = userAuthStore();
-
+  const { isLoggedIn, currentComponent } = storeToRefs(authStore);
+  const { setCurrentComponent, setIsLogdedin } = userAuthStore();
 
   const underlineL = ref(null);
   const underlineR = ref(null);
@@ -383,7 +383,9 @@
   const loopType = 'next';
   const carouselPositions = computed(() => [...Array(features.value.length).keys()]
     .map((item, index) => index === 2 ? carouselBase.value * 2 : index === 0 ? (index - 1) * carouselBase.value : index === 1 ? 0 : 40 + (index - 2) * carouselBase.value));
+
   const carouselCounter = ref(1);
+
   const mainIndex = computed(()=> [...Array(features.value.length).keys()]
     .findIndex((index) => (carouselCounter.value + index)%(features.value.length) === 1));
 
@@ -395,6 +397,8 @@
 
   const email = ref('mawchu0412@gmail.com');
   const password = ref('123456');
+
+  setIsLogdedin();
 
   onMounted(() => {
     const link = document.createElement('link')

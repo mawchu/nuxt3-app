@@ -16,7 +16,7 @@ export const categoryDefaultList = reactive([
     { title: '日用品', value: 'neccessary', icon: ['fas', 'basket-shopping'] },
 ]);
 
-const regexAgainstXSS = /^[\w\u4E00-\u9FFF]{2,}$/;
+const regexAgainstXSS = /^(?!.*[<>])[\u4E00-\u9FFF0-9a-zA-Z ()—-]{2,}$/;
 export const regexMap = {
     date: { regex: /^(19[5-9]\d|20\d{2})\/(0[1-9]|1[0-2])\/(0[1-9]|[1-2]\d|3[01])$/, name: '日期' },
     memo: { regex: regexAgainstXSS, name: '備註' },

@@ -42,12 +42,16 @@
   import { storeToRefs } from 'pinia'
   import componentHome from './home/index.vue';
   import componentUserCenter from './userCenter/index.vue';
+  import componentSpendingRecords from './userCenter/spendingRecords.vue';
+  import componentOverview from './userCenter/Overview.vue';
   // import lottie from 'lottie-web';
   // import animationData from '~/assets/lottie/animation.json';
   
   const componentMap = reactive({
     userCenter: componentUserCenter,
-    home: componentHome
+    home: componentHome,
+    spendingRecords: componentSpendingRecords,
+    overview: componentOverview
   });
 
   const authStore = userAuthStore ();
