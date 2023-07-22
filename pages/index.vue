@@ -66,6 +66,7 @@
       setCurrentComponent ('userCenter');
       component.value = componentMap[currentComponent.value];
   })
+  
   watch(currentComponent, (val,oldVal)=>{
     component.value = componentMap[currentComponent.value];
   })

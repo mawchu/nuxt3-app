@@ -44,19 +44,30 @@
                 </div>
                 <div class="w-full lg:w-full lg:pr-6 overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-100 scrollbar-rounded-lg">
                     <div class="w-full lg:w-full max-h-[600px] sm:h-[320px] pr-4 lg:pr-0">
-                        <div v-for="(item, index) in 10" :key="index" class="rounded-[30px] bg-white w-full md:h-[58px] flex flex-wrap md:flex-nowrap mb-[10px]">
+                        <div v-for="({
+                            id,
+                            item,
+                            date,
+                            createdDate,
+                            category,
+                            selfDefinedCategory,
+                            amount,
+                            memo,
+                            isOpen,
+                            isEdit
+                        }, index) in spendingRecords" :key="index" class="rounded-[30px] bg-white w-full md:h-[58px] flex flex-wrap md:flex-nowrap mb-[10px]">
                             <div class="text-xs sm:text-sm text-[#9a9a9a] font-semibold flex items-center h-[calc(100%-30px)] justify-between w-full md:w-[55%] m-[15px] mr-0 mb-0 md:mb-[15px] md:border-r-[1px] border-secondary">
-                                <p>
-                                    2023.07.21<br>
-                                    泰舍晚餐
+                                <p class="w-[250px] overflow-hidden truncate">
+                                    {{ date }}<br>
+                                    {{ item }}
                                 </p>
                                 <font-awesome-icon
                                     class="text-xl md:text-2xl text-secondary mr-[15px] border-b-[1px] md:border-b-0 border-secondary pb-[8px] sm:pb-[15px] md:pb-0 md:mb-0"
-                                    :icon="['fa-solid', 'fa-burger']" />
+                                    :icon="getIconForCategory(category)" />
                             </div>
                             <div class="text-2xl sm:text-2xl text-secondary font-black flex items-center h-[100%] justify-between w-full md:w-[45%] p-[15px]">
                                 <p>$</p>
-                                <span>1,234</span>
+                                <span>{{ amount }}</span>
                             </div>
                         </div>
                     </div> 
@@ -76,9 +87,11 @@
                         </span>
                     </h3>
                     <div class="relative flex items-center" style="flex: 1 1 auto">
-                        <v-chart ref="chartsPie" class="w-full h-[300px] py-4" :option="pieOption" />
+                        <v-chart ref="chartsPie" class="py-4" style="width: 100%; height: 300px;" :option="pieOption" />
                         <div class="absolute bottom-[5%] left-0 w-[30px] flex flex-col">
-                            <div v-for="(index) in 5" :key="index" class="w-[15px] h-[15px] rounded-full my-1 hover:my-3" :style="`background-color: ${colors[index]}`"></div>
+                            <div v-for="(index) in 5" :key="index"
+                                class="w-[15px] h-[15px] rounded-full my-1 hover:my-3"
+                                :style="`background-color: ${colors[index]}`"></div>
                         </div>
                     </div>
                     
@@ -95,7 +108,7 @@
                         </span>
                     </h3>
                     <div ref="wrapperChartsLine" class="flex items-center" style="flex: 1 1 auto">
-                        <v-chart ref="chartsLine" class="w-full h-[300px] py-4" :width="chartsLineWidth" :option="lineOption" />
+                        <v-chart ref="chartsLine" class="py-4" style="width: 100%; height: 300px;" :width="chartsLineWidth" :option="lineOption" />
                     </div>
                 </div>
             </article>
@@ -105,6 +118,7 @@
 <style lang="scss" scoped>
 </style>
 <script setup>
+    import { getIconForCategory, monthToName } from '~/utility';
     import dayjs from 'dayjs'
     import { use } from "echarts/core";
     import { CanvasRenderer } from "echarts/renderers";
@@ -120,8 +134,9 @@
     import { UniversalTransition } from 'echarts/features';
     import Please from 'pleasejs'
     import { storeToRefs } from 'pinia'
-
     import { userCenterStore } from '~/stores/userCenter.js';
+    const { spendingRecords } = storeToRefs(userCenterStore());
+
 
     use([
         CanvasRenderer,
@@ -244,26 +259,20 @@
         setTimeout(() => {
             chartsPie.value.resize ();
             chartsLine.value.resize ();
-        },0)
+        },10)
     }
-    function monthToName (number, length) {
-        const monthMap = [
-            'January', 'February', 'March', 'April', 'May', 'June', 'July',
-            'August', 'September', 'October', 'November', 'December'
-        ];
-        return monthMap[number].substring(0, length) ;
-    }
-    onMounted(() => {
-        deviceWidth.value = window.innerWidth;
-        chartsLineWidth.value = wrapperChartsLine.value.clientWidth;
 
-        window.addEventListener('resize', () => {
-            deviceWidth.value = window.innerWidth;
-            resizeCharts ();
+    onMounted(() => {
+        nextTick(() => {
+            window.addEventListener('resize', () => {
+                deviceWidth.value = window.innerWidth;
+                deviceWidth.value = window.innerWidth;
+                if (wrapperChartsLine.value && chartsLine.value && chartsPie.value) resizeCharts ();
+            })
         })
+        
     })
     watch(toggleMenu, (val,oldVal)=>{
-        chartsLineWidth.value = wrapperChartsLine.value.clientWidth;
         resizeCharts ();
     })
 </script>

@@ -344,7 +344,7 @@
   // import animationData from '~/assets/lottie/animation.json';
   const authStore = userAuthStore ();
   const { isLoggedIn, currentComponent } = storeToRefs(authStore);
-  const { setCurrentComponent, setIsLogdedin } = userAuthStore();
+  const { setCurrentComponent, setIsLoggedIn } = userAuthStore();
 
   const underlineL = ref(null);
   const underlineR = ref(null);
@@ -398,7 +398,7 @@
   const email = ref('mawchu0412@gmail.com');
   const password = ref('123456');
 
-  setIsLogdedin();
+  setIsLoggedIn();
 
   onMounted(() => {
     const link = document.createElement('link')

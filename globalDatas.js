@@ -13,14 +13,34 @@ export const categoryDefaultList = reactive([
     { title: '旅行', value: 'trip', icon: ['fas', 'map-location-dot'] },
     { title: '醫療', value: 'hospital', icon: ['fas', 'heart-pulse'] },
     { title: '住宿', value: 'stay', icon: ['fas', 'house-user'] },
-    { title: '日用品', value: 'neccessary', icon: ['fas', 'basket-shopping'] },
+    { title: '日用品', value: 'neccessary', icon: ['fas', 'basket-shopping'] }
 ]);
 
+export const selfDefinedCategory = reactive([
+    { value: 'baby', icon: ['fas', 'baby-carriage'] },
+    { value: 'music', icon: ['fas', 'music'] },
+    { value: 'plane', icon: ['fas', 'plane'] },
+    { value: 'gift', icon: ['fas', 'gift'] },
+    { value: 'ice-cream', icon: ['fas', 'ice-cream'] },
+    { value: 'plant', icon: ['fas', 'seedling'] }
+])
+
 const regexAgainstXSS = /^(?!.*[<>])[\u4E00-\u9FFF0-9a-zA-Z ()—-]{2,}$/;
+const regexAgainstXSSAndAllowEmpty = /^(?!.*[<>])[\u4E00-\u9FFF0-9a-zA-Z ()—-]{0}|^(?!.*[<>])[\u4E00-\u9FFF0-9a-zA-Z ()—-]{2,}$/;
 export const regexMap = {
     date: { regex: /^(19[5-9]\d|20\d{2})\/(0[1-9]|1[0-2])\/(0[1-9]|[1-2]\d|3[01])$/, name: '日期' },
-    memo: { regex: regexAgainstXSS, name: '備註' },
+    memo: { regex: regexAgainstXSSAndAllowEmpty, name: '備註' },
     amount: { regex: /^[0-9]+$/, name: '金額' },
     category: { regex: regexAgainstXSS, name: '分類' },
-    item: { regex: regexAgainstXSS, name: '項目' },
+    selfDefinedCategory:  { regex: regexAgainstXSSAndAllowEmpty, name: '自定義分類' },
+    item: { regex: regexAgainstXSSAndAllowEmpty, name: '項目' },
+    shop: { regex: regexAgainstXSSAndAllowEmpty, name: '商店' }
 };
+
+export const regexTester = (regex, value) => regex.test(value);
+
+export function validInput (dataList, type) { 
+    const { regex } = regexMap[type];
+    if(!regexTester(regex, dataList[type])) return `${regexMap[type].name}格式有誤，或字數太少`;
+    if(regexTester(regex, dataList[type])) return ``;
+}

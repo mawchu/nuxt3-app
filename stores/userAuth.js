@@ -13,7 +13,8 @@ export const userAuthStore = defineStore('auth', {
     }),
     getters: {
       getLoginState: (state) => state.isLoggedIn,
-      getCurrentComponent: (state) => state.currentComponent
+      getCurrentComponent: (state) => state.currentComponent,
+      getUserData: (state) => state.userData,
     },
     actions: {
       setUser (user) {
@@ -27,7 +28,7 @@ export const userAuthStore = defineStore('auth', {
         Cookies.remove('userId');
         Cookies.set('userId', uid, { expires: expirationDate });
       },
-      setIsLogdedin () {
+      setIsLoggedIn () {
         if(Cookies.get('userId')) this.isLoggedIn = true;
       },
       login (user) {
