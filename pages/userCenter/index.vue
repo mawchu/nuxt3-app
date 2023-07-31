@@ -429,7 +429,7 @@
         // console.log(Object.keys(submitSpending))
         const valid = Object.keys(submitSpending)
             .every((key) => {
-                console.log('key', key)
+                // console.log('key', key)
                 if (submitSpending[key] === '') return false;
                 if (submitSpending[key]) {
                     const regex = regexMap[key].regex;

@@ -17,3 +17,7 @@ export function monthToName (number, length) {
     ];
     return monthMap[number].substring(0, length) ;
 }
+
+export function toCommas (value) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}

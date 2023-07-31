@@ -5,10 +5,12 @@ import {
 } from "firebase/firestore";
 
 export default defineNuxtPlugin(nuxtApp => {
+   
     // Doing something with nuxtApp
     const config = useRuntimeConfig();
     const firebaseConfig = {
-        apiKey: config.FIREBASE_API_KEY,
+        apiKey: config.public.FIREBASE_API_KEY,
+        // apiKey: 'AIzaSyBCMea7Lk6im7PIlrHBX94YqmbLoHvchEo',
         authDomain: "financial-asistant.firebaseapp.com",
         projectId: "financial-asistant"
     };

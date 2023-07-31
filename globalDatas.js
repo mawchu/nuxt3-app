@@ -12,10 +12,12 @@ export const categoryDefaultList = reactive([
     { title: '交通', value: 'traffic', icon: ['fas', 'van-shuttle'] },
     { title: '旅行', value: 'trip', icon: ['fas', 'map-location-dot'] },
     { title: '醫療', value: 'hospital', icon: ['fas', 'heart-pulse'] },
+    { title: '保險', value: 'insurance', icon: ['fas', 'helmet-safety'] },
     { title: '住宿', value: 'stay', icon: ['fas', 'house-user'] },
-    { title: '日用品', value: 'neccessary', icon: ['fas', 'basket-shopping'] }
+    { title: '日用品', value: 'neccessary', icon: ['fas', 'basket-shopping'] },
+    { title: '娛樂', value: 'entertainment', icon: ['fas', 'parachute-box'] },
+    
 ]);
-
 export const selfDefinedCategory = reactive([
     { value: 'baby', icon: ['fas', 'baby-carriage'] },
     { value: 'music', icon: ['fas', 'music'] },

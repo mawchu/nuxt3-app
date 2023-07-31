@@ -18,7 +18,9 @@
                             <span class="border-b-4 border-secondary">NTD</span>
                             <div class="mt-4 w-full flex justify-between">
                                 <span>$</span>
-                                <span class="text-3xl xl:text-4xl">12,345</span>
+                                <span class="text-3xl xl:text-4xl">
+                                    {{ toCommas(amountDatas.latestMonth) }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -67,7 +69,7 @@
                             </div>
                             <div class="text-2xl sm:text-2xl text-secondary font-black flex items-center h-[100%] justify-between w-full md:w-[45%] p-[15px]">
                                 <p>$</p>
-                                <span>{{ amount }}</span>
+                                <span>{{ toCommas(amount) }}</span>
                             </div>
                         </div>
                     </div> 
@@ -86,12 +88,23 @@
                             Category Rating
                         </span>
                     </h3>
-                    <div class="relative flex items-center" style="flex: 1 1 auto">
-                        <v-chart ref="chartsPie" class="py-4" style="width: 100%; height: 300px;" :option="pieOption" />
-                        <div class="absolute bottom-[5%] left-0 w-[30px] flex flex-col">
-                            <div v-for="(index) in 5" :key="index"
-                                class="w-[15px] h-[15px] rounded-full my-1 hover:my-3"
-                                :style="`background-color: ${colors[index]}`"></div>
+                    <div class="relative flex flex-col sm:flex-row sm:items-center" style="flex: 1 1 auto" @mouseleave="resetDataName()">
+                        <v-chart ref="chartsPie" class="py-4" style="width: 100%; height: 300px;" :option="pieOption"/>
+                        <div class="sm:absolute sm:bottom-[5%] pl-[calc(50%-(220px/2)+6px)] sm:pl-0 sm:left-0 w-[30px] flex flex-col pointer-events-none">
+                            <div v-for="({ color, name, rate }, index) in categoryPieConsist.latestMonth" :key="index"
+                                class="w-[15px] h-[15px] rounded-full my-2 transition-all duration-300 relative z-[5] group" :style="`background-color: ${color}`" :class="[ dataName === name ? 'my-6 sm:my-4' : 'sm:my-1' ]">
+                                <div class="absolute -top-[13.5px] -left-[8px] z-[4] w-[220px] h-[42px] rounded-full flex items-center justify-between px-2" :class="[ dataName === name ? 'bg-white opacity-100 sm:opacity-80 shadow' : 'sm:bg-transparent sm:opacity-0' ]">
+                                    <div class="w-[15px] h-[15px] rounded-full" :style="`background-color: ${color}`" ></div>
+                                    <div class="flex justify-between items-center flex-grow-2 w-[200px] font-bold">
+                                       <div class="flex items-center">
+                                            <font-awesome-icon class="text-[#999] text-base md:text-xl w-[20px] px-2" :icon="getIconForCategory(name)" />
+                                            <span class="text-base">{{ name }}</span>
+                                        </div>
+                                        <span class="text-lg font-extrabold text-secondary">{{ rate }}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
                     
@@ -118,7 +131,8 @@
 <style lang="scss" scoped>
 </style>
 <script setup>
-    import { getIconForCategory, monthToName } from '~/utility';
+    import { getIconForCategory, monthToName, toCommas } from '~/utility';
+
     import dayjs from 'dayjs'
     import { use } from "echarts/core";
     import { CanvasRenderer } from "echarts/renderers";
@@ -132,11 +146,17 @@
     import VChart from "vue-echarts";
     import { graphic } from 'echarts/lib/echarts'
     import { UniversalTransition } from 'echarts/features';
-    import Please from 'pleasejs'
+
     import { storeToRefs } from 'pinia'
     import { userCenterStore } from '~/stores/userCenter.js';
-    const { spendingRecords } = storeToRefs(userCenterStore());
 
+    const {
+        spendingRecords,
+        amountDatas,
+        categoryPieConsist,
+        latestMonthRecords,
+        latestMonthMergedRecords
+    } = storeToRefs(userCenterStore());
 
     use([
         CanvasRenderer,
@@ -150,22 +170,19 @@
     ]);
 
     const { toggleMenu } = storeToRefs(userCenterStore());
-    const colors = Please.make_scheme(
-        {
-            h: 13,
-            s: .50,
-            v: .92
-        },
-        {
-            colors_returned: 10,
-            format: 'hex'
-        }
-    );
-    const deviceWidth = ref(0);
 
-    const lineOption = {
+    const deviceWidth = ref(0);
+    const dataName = ref('');
+    const lineOption = ref({
         tooltip: {
-            trigger: 'axis'
+            trigger: 'axis',
+            formatter: function(params) {
+                const [ series ] = params;
+                const { value, axisValue } = series;
+                return `<div class="text-right">${axisValue}<br />
+                    <span class="text-secondary font-extrabold text-lg">$ ${toCommas(series.value)}</span>
+                </div>`
+            }
         },
         grid: {
             left: '3%',
@@ -178,22 +195,27 @@
             axisTick: {
                 show: false
             },
+            number: 3,
             axisLabel: {
-                rotate: 45
+                rotate: 45,
+                fontSize: 10,
+                fontWeight: 'bolder',
+                color: '#aaa',
+                interval: 1
             },
-            data: ['2023/07/01', '2023/07/01', '2023/07/01', '2023/07/01', '2023/07/01', '2023/07/01', '2023/07/01', '2023/07/01', '2023/07/01', '2023/07/01', '2023/07/01']
+            data: []
         },
         yAxis: {
             type: 'value'
         },
         series: [
             {
-                data: [120, 932, 450, 934, 234, 820, 660, 120, 932, 450, 934],
+                data: [],
                 type: 'line',
                 smooth: true,
                 showSymbol: false,
                 lineStyle: {
-                    width: 4,
+                    width: 3,
                     color: '#FBA47E'
                 },
                 areaStyle: {
@@ -211,19 +233,22 @@
                 }
             }
         ]
-    };
+    });
 
-    const pieOption = {
+    const pieOption = ref({
         tooltip: {
           trigger: 'item',
-          formatter: '{a} <br/>{b} : {c} ({d}%)',
+          formatter: function({ name }) {
+            dataName.value = name;
+          },
+        //   show: false
         },
-        series: [
-          {
-            name: 'Traffic Sources',
+        selectedMode: 'single',
+        series: {
+            name: '花費佔比',
             type: 'pie',
-            radius: ['50%', '95%'],
-            center: ['58%', '50%'],
+            radius: ['45%', '85%'],
+            center: ['50%', '50%'],
             itemStyle: {
                 borderColor: '#E9FFDD',
                 borderWidth: 6
@@ -232,30 +257,27 @@
                 show: false,
                 position: 'center'
             },
-            data: [
-              { value: 335, name: 'Direct', itemStyle: { color: colors[0] } },
-              { value: 310, name: 'Email' , itemStyle: { color: colors[1] }},
-              { value: 234, name: 'Ad Networks', itemStyle: { color: colors[2] } },
-              { value: 135, name: 'Video Ads', itemStyle: { color: colors[3] } },
-              { value: 1548, name: 'Search Engines', itemStyle: { color: colors[4] } },
-            ],
-            // emphasis: {
-            //   itemStyle: {
-            //     shadowBlur: 10,
-            //     shadowOffsetX: 0,
-            //     shadowColor: 'rgba(0, 0, 0, 0.5)',
-            //   },
-            // },
+            data: [],
+            color: [],
+            emphasis: {
+                scale: true,
+                itemStyle: {
+                    // shadowBlur: 10,
+                    // shadowOffsetX: 0,
+                    // shadowColor: 'rgba(0, 0, 0, 0.5)',
+                },
+            },
           },
-        ],
-    };
-    
+        
+    });
+  
     const chartsPie = ref(null);
     const chartsLine = ref(null);
     const wrapperChartsLine = ref(null);
     const chartsLineWidth = ref(0);
     function resizeCharts () {
         chartsLineWidth.value = wrapperChartsLine.value.clientWidth;
+        
         setTimeout(() => {
             chartsPie.value.resize ();
             chartsLine.value.resize ();
@@ -264,15 +286,32 @@
 
     onMounted(() => {
         nextTick(() => {
+            categoryPieConsist.value &&
+            categoryPieConsist.value.latestMonth &&
+            categoryPieConsist.value.latestMonth
+                .forEach(({ name, value, color }) => {
+                    pieOption.value.series.data.push({ name, value });
+                    pieOption.value.series.color.push(color);
+                })
+            latestMonthMergedRecords.value.forEach(({ amount, date }) => {
+                lineOption.value.xAxis.data.push(date);
+                lineOption.value.series[0].data.push(amount);
+            })
+            
             window.addEventListener('resize', () => {
                 deviceWidth.value = window.innerWidth;
                 deviceWidth.value = window.innerWidth;
                 if (wrapperChartsLine.value && chartsLine.value && chartsPie.value) resizeCharts ();
             })
+            
         })
-        
     })
+
     watch(toggleMenu, (val,oldVal)=>{
         resizeCharts ();
     })
+
+    function resetDataName () {
+        dataName.value = '';
+    }
 </script>

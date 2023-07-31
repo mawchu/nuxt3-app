@@ -6,20 +6,24 @@
                     <h2 class="flex items-center pt-6">
                         <font-awesome-icon :icon="['fas', 'clock']" />
                         <span class="mx-2 md:mx-4 text-center font-extrabold transition-all duration-300 lg:text-2xl">
-                            {{ monthToName(dayjs(spendingRecords[0].date).month(), 3) }} Amount
+                            {{ monthToName(dayjs(originalRecord[0].date).month(), 3) }} Amount
                         </span>
                     </h2>
                     <p class="text-secondary mb-0">
                         <span class="text-2xl font-extrabold">$</span>
-                        <span class="text-3xl md:text-4xl lg:text-5xl font-extrabold ">12,345</span>
+                        <span class="text-3xl md:text-4xl lg:text-5xl font-extrabold ">
+                            {{ toCommas(amountData) }}
+                        </span>
                     </p>
                 </div>
                 <div class="flex">
-                    <div v-for="(item, index) in 3" :key="index"
+                    <div v-for="({ month }, index) in recordsMonths" :key="index"
                         class="w-[30px] h-[30px] mx-1 rounded-full  text-xl font-bold flex justify-center items-center cursor-pointer transition-all duration-200"
                         :class="[
-                            index === 0 ? 'bg-black text-white' : 'border-[3px] border-secondary text-secondary hover:bg-secondary hover:text-white'
-                        ]">{{ index + 1 }}</div>
+                            currentMonth === month
+                                ? 'bg-black text-white' : 'border-[3px] border-secondary text-secondary hover:bg-secondary hover:text-white'
+                        ]"
+                        @click="currentMonth = month">{{ month }}</div>
                 </div>
             </div>
             <article class="w-full flex-auto bg-[#eee] overflow-x-auto" style="flex: 0 1 auto">
@@ -85,7 +89,7 @@
                                     </div>
                                 </section>
                                 <div class="w-[50px] relative text-lg z-[1] cursor-pointer">
-                                    <font-awesome-icon v-if="!isEdit" class="mr-4 hover:text-secondary hover:scale-125" :icon="['fas', 'pen-to-square']"
+                                    <font-awesome-icon v-if="!isEdit" class="mr-4 hover:text-secondary hover:scale-125 " :icon="['fas', 'pen-to-square']"
                                         @click.stop="switchEditState(index)"/>
                                     <font-awesome-icon v-if="isEdit" class="mr-4 hover:text-secondary hover:scale-125" :icon="['fas', 'clipboard-check']" 
                                         @click.stop="editRecord(index, id)"/>
@@ -121,7 +125,7 @@
                                 <span class="font-extrabold text-secondary text-xl">$</span>
                                 <h4 v-if="!isEdit || !isOpen">
                                     <span class="font-extrabold text-secondary text-xl">
-                                        {{ amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') }}
+                                        {{ toCommas(amount) }}
                                     </span>
                                 </h4>
                                 <input v-if="isEdit && isOpen" v-model="modifiedRecord[index].amount" class="ml-4 text-[#999] bg-white w-full px-2 text-right focus:outline-none"
@@ -161,11 +165,12 @@
     import { storeToRefs } from 'pinia'
     import { userCenterStore } from '~/stores/userCenter.js';
     import { categoryDefaultList, regexMap, regexTester, validInput } from '~/globalDatas';
-    import { getIconForCategory, monthToName } from '~/utility';
+    import { getIconForCategory, monthToName, toCommas } from '~/utility';
+    import { orderBy } from 'lodash';
 
     const { $db } = useNuxtApp();
-    const { spendingRecords } = storeToRefs(userCenterStore());
-    const { setIsOpenToSpendingRecords } = userCenterStore();
+    const { spendingRecords, recordsMonths, latestMonth } = storeToRefs(userCenterStore());
+    // const { setIsOpenToSpendingRecords } = userCenterStore();
     const deviceWidth = ref(0);
     let originalRecord = ref([]);
     let modifiedRecord = reactive([]);
@@ -173,43 +178,59 @@
     let openIndex = reactive([]);
     const invalidInputMsg = ref('');
     let showModal = ref(false);
-   
-    // originalRecord.value = JSON.parse(JSON.stringify(spendingRecords.value));
+    let currentMonth = ref('');
+    let amountData = ref(0);
+    let sortMap = reactive({
+        date: 'desc',
+        createdTime: 'asc',
+        amount: 'asc',
+    });
+    let sortType = ref('date');
 
     function resetSpendingRecords () {
-        const { spendingRecords } = storeToRefs(userCenterStore());
-        originalRecord.value = JSON.parse(JSON.stringify(spendingRecords.value));
-        modifiedRecord = JSON.parse(JSON.stringify(spendingRecords.value))
+        // const { spendingRecords } = storeToRefs(userCenterStore());
+        const [list] = recordsMonths.value
+            .filter(({ month }) => month === currentMonth.value)
+            .map(({ list }) => list);
+
+        originalRecord.value = JSON.parse(JSON.stringify(list));
+        modifiedRecord = JSON.parse(JSON.stringify(list))
             .map((item) => (
                 {
                     ...item,
                     valid: true
                 }
             ));
+
+        if (sortType.value === 'date') {
+            originalRecord.value = orderBy(originalRecord.value, ['date'], [sortMap[sortType.value]]);
+            modifiedRecord = orderBy(modifiedRecord, ['date'], [sortMap[sortType.value]]);
+        }
+
+        amountData.value = calculateSum ();
         
     }
 
+    currentMonth.value = latestMonth.value;
     resetSpendingRecords ();
-    
-    //    spendingRecords = spendingRecords.length && spendingRecords.map((item) => item.isOpen = false)
+
     onMounted(() => {
         deviceWidth.value = window.innerWidth;
-
         window.addEventListener('resize', () => {
             deviceWidth.value = window.innerWidth;
         })
     })
 
-
    function toggleBorderClass ($event, index) {
         // isOpen.value = !isOpen.value;
-        resetSpendingRecords ();
+        // resetSpendingRecords ();
         // setIsOpenToSpendingRecords(index);
         switchOpenStatus(index);
    }
 
    async function deleteRecord (deleteId) {
         await deleteUserSpendingRecord($db, Cookies.get('userId'), deleteId)
+        await loadUserSpendingRecord($db, Cookies.get('userId'));
    }
    
    function switchEditState (index) {
@@ -248,6 +269,7 @@
                 // console.log('key', key)
                 if (newData[key] === '') return false;
                 if (newData[key]) {
+                    console.log('validKey', key)
                     const regex = regexMap[key].regex;
                     return regexTester(regex, newData[key]);
                 } 
@@ -314,11 +336,22 @@
         switchIsOpen(index);
    }
    
-   function validInputMsg (index, type) {
+    function validInputMsg (index, type) {
         invalidInputMsg.value = validInput (modifiedRecord[index], type);
         modifiedRecord[index].valid = loopInvalidInput (index);
     }
-//    watch(spendingRecords.value, (val, oldVal) => {
-//         spendingRecords.value
-//    })
+
+    function calculateSum () {
+        return modifiedRecord
+            .reduce((sum, { amount }) => sum + Number(amount), 0);
+    }
+
+    watch(currentMonth, (val, oldVal) => {
+        resetSpendingRecords ();
+        amountData.value = calculateSum ();
+    })
+
+    watch(sortType, (val, oldVal) => {
+        
+    })
 </script>
