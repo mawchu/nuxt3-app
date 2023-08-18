@@ -28,7 +28,7 @@
     </footer>
 </template>
 <script setup>
-  import * as dayjs from 'dayjs';
+  import dayjs from 'dayjs';;
   import { menuList } from '~/globalDatas';
   import logo from '~/assets/images/logo.svg';
 

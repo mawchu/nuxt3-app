@@ -1,7 +1,7 @@
 
 import { createPinia, defineStore } from 'pinia'
 // import Please from 'pleasejs'
-import { groupBy } from 'lodash';
+import { groupBy } from 'lodash-es';
 import chroma from 'chroma-js';
 // export const pinia = createPinia();
 export const userCenterStore = defineStore('userCenter', {
@@ -9,16 +9,18 @@ export const userCenterStore = defineStore('userCenter', {
       toggleMenu: true,
       spendingRecords: [],
       latestMonthRecords: [],
-      latestMonthMergedRecords: [],
+      overviewMergedRecords: [],
       latestMonth: null,
       recordsMonths: [],
       openCounter: 0,
       openIndex: [],
       amountDatas: {
-        latestMonth: 0
+        latestMonth: 0,
+        overview: 0
       },
       categoryPieConsist: {
-        latestMonth: null
+        latestMonth: null,
+        overview: null
       }
     }),
     getters: {
@@ -35,6 +37,7 @@ export const userCenterStore = defineStore('userCenter', {
           .map((item) => (
             {
               ...item,
+              amount: Number(item.amount),
               isOpen: false,
               openCounter: 0,
               isEdit: false
@@ -42,31 +45,27 @@ export const userCenterStore = defineStore('userCenter', {
           ))
           .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-          // function filterDatesByMonth(dates, year, month) {
-          //   const startDate = dayjs(`${year}-${month}-01`);
-          //   const endDate = startDate.endOf('month');
-          
-          //   return dates.filter(date => {
-          //     const currentDate = dayjs(date);
-          //     return currentDate.isSameOrAfter(startDate) && currentDate.isSameOrBefore(endDate);
-          //   });
-          // }
-          this.latestMonth = this.spendingRecords[0].date.split('/')[1];
-          const months = this.spendingRecords.map(({ date }) => date.split('/')[1]);
-          this.recordsMonths = [...new Set(months)]
-            .map((month)=> ({
-              month,
-              list: this.spendingRecords
-                .filter(({ date })=> date.split('/')[1] === month)
-                .sort((a, b) => new Date(a.date) - new Date(b.date)),
-            })
-          );
+        this.latestMonth = this.spendingRecords[0].date.split('/')[1];
+        const months = this.spendingRecords.map(({ date }) => date.split('/')[1]);
+        this.recordsMonths = [...new Set(months)]
+          .reverse()
+          .map((month)=> ({
+            month,
+            list: this.spendingRecords
+              .filter(({ date })=> date.split('/')[1] === month)
+              .sort((a, b) => new Date(a.date) - new Date(b.date)),
+          })
+        );
 
-          this.latestMonthRecords = this.spendingRecords
-            .filter(({ date })=> date.split('/')[1] === this.latestMonth)
-            .sort((a, b) => new Date(a.date) - new Date(b.date))
+        this.latestMonthRecords = this.spendingRecords
+          .filter(({ date })=> date.split('/')[1] === this.latestMonth)
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
         
-          this.latestMonthMergedRecords = this.latestMonthRecords.reduce((accumulator, currentSpending) => {
+        
+      
+        this.overviewMergedRecords = JSON.parse(JSON.stringify(this.spendingRecords))
+          .filter((recordItem, index) => index < 31)
+          .reduce((accumulator, currentSpending) => {
             if (accumulator.length) {
               const existingSpending = accumulator.find((spending) => spending.date === currentSpending.date);
               if (existingSpending) {
@@ -83,26 +82,39 @@ export const userCenterStore = defineStore('userCenter', {
             return accumulator;
           }, []);
 
-          this.amountDatas.latestMonth = this.latestMonthRecords
-            .reduce((sum, { amount }) => sum + Number(amount), 0);
+        this.amountDatas.latestMonth = this.latestMonthRecords
+          .reduce((sum, { amount }) => sum + Number(amount), 0);
 
-          const latestMonthCaterotyDic = groupBy(this.latestMonthRecords, 'category');
+        this.amountDatas.overview = this.spendingRecords
+          .filter((recordItem, index) => index < 31)
+          .reduce((sum, { amount }) => sum + Number(amount), 0);
 
-          const colors = chroma.scale(['#FBA47E', '#FAE57A', '#91D48F'])
-            .mode('lch').colors(Object.keys(latestMonthCaterotyDic).length);
+        const latestMonthCaterotyDic = groupBy(this.latestMonthRecords, 'category');
+        const overviewCaterotyDic = groupBy(this.spendingRecords.filter((recordItem, index) => index < 31), 'category');
 
-          this.categoryPieConsist.latestMonth = Object.keys(latestMonthCaterotyDic)
+        
+        function calculateCategoryRate (categoryDictionary, totalSum) {
+          const colors = chroma
+            .scale(['#FBA47E', '#FAE57A', '#91D48F'])
+            .mode('lch')
+            .colors(Object.keys(categoryDictionary).length);
+
+          return Object.keys(categoryDictionary)
             .map((category, index) => {
-              const categorySum = latestMonthCaterotyDic[category]
+              const categorySum = categoryDictionary[category]
                 .reduce((sum, { amount }) => sum + Number(amount), 0);
 
               return {
                 name: category,
                 value: categorySum,
                 color: colors[index],
-                rate: ((categorySum / this.amountDatas.latestMonth) * 100).toFixed(2)
+                rate: ((categorySum / totalSum) * 100).toFixed(2)
               }
             });
+        }
+
+        this.categoryPieConsist.latestMonth = calculateCategoryRate (latestMonthCaterotyDic, this.amountDatas.latestMonth);
+        this.categoryPieConsist.overview = calculateCategoryRate (overviewCaterotyDic, this.amountDatas.overview);
           
       },
       setIsOpenToSpendingRecords (index) {

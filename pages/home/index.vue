@@ -400,6 +400,28 @@
 
   setIsLoggedIn();
 
+  useHead({
+    title: 'Financial Assistant 財不會忘記你',
+    meta: [
+      {
+        name: 'description',
+        content: 'Financial Assistant 財不會忘記你是一款記錄財務狀況的小幫手，可以對每一筆花費貼上標籤予以歸類，並且透過視覺化資料圖表一目瞭然資金動向；掌握每個期間的支出與收入，設定花費門檻提醒花費的額度，避免過度的開銷。'
+      },
+      {
+        property: 'og:site_name',
+        content: 'Financial Assistant 財不會忘記你'
+      },
+      {
+        property: 'og:title',
+        content: 'Financial Assistant 財不會忘記你'
+      },
+      {
+        property: 'og:description',
+        content: 'Financial Assistant 財不會忘記你是一款記錄財務狀況的小幫手，可以對每一筆花費貼上標籤予以歸類，並且透過視覺化資料圖表一目瞭然資金動向；掌握每個期間的支出與收入，設定花費門檻提醒花費的額度，避免過度的開銷。'
+      },
+    ]
+  })
+
   onMounted(() => {
     const link = document.createElement('link')
     link.rel = 'stylesheet'

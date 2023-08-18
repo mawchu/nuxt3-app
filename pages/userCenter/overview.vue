@@ -5,13 +5,17 @@
                 <div class="mb-4 md:mb-5 xl:mb-6">
                     <font-awesome-icon :icon="['fa-regular', 'fa-calendar-days']" />
                     <span class="mx-2 md:mx-4 text-center font-extrabold transition-all duration-300">
-                        Monthly Spending
+                        Sums Up Spending
                     </span>
                 </div>
                 <div class="flex flex-wrap items-stretch lg:flex-nowrap flex-1">
                     <div class="w-full md:w-[calc(50%-10px)] mb-[20px] md:mb-0 md:mr-[10px] h-[100%] flex flex-col justify-between rounded-[30px] border-[4px] border-quaternary p-[20px]">
                         <div class="w-full flex justify-between">
-                            <p class="text-sm sm:text-base  font-semibold text-[#9a9a9a] leading-[16px] sm:leading-[14px] lg:leading-[18px]">{{ monthToName(dayjs().month(), 3) }} {{ dayjs().year() }}<br>Total Amount</p>
+                            <p class="text-sm sm:text-base  font-semibold text-[#9a9a9a] leading-[16px] sm:leading-[14px] lg:leading-[18px]">
+                                Total Amount<br>
+                                <span v-if="overviewMergedRecords.length" class="text-xs">{{ overviewMergedRecords[0].date }} - {{ overviewMergedRecords[overviewMergedRecords.length-1].date.substring(5)  }}</span>
+                            </p>
+                                
                             <font-awesome-icon class="text-secondary text-3xl" :icon="['fa-solid', 'fa-ellipsis']" />
                         </div>
                         <div class="font-extrabold text-secondary mt-[10px] md:mt-[20px]">
@@ -19,7 +23,7 @@
                             <div class="mt-4 w-full flex justify-between">
                                 <span>$</span>
                                 <span class="text-3xl xl:text-4xl">
-                                    {{ toCommas(amountDatas.latestMonth) }}
+                                    {{ toCommas(amountDatas.overview) }}
                                 </span>
                             </div>
                         </div>
@@ -30,7 +34,7 @@
                             <font-awesome-icon class="text-secondary text-3xl" :icon="['fa-solid', 'fa-ellipsis']" />
                         </div>
                         <div class="font-extrabold text-secondary text-right">
-                            <span class="text-5xl">54</span>
+                            <span class="text-5xl">{{ overviewMergedRecords.length }}</span>
                         </div>
                     </div>
                 </div>
@@ -57,7 +61,7 @@
                             memo,
                             isOpen,
                             isEdit
-                        }, index) in spendingRecords" :key="index" class="rounded-[30px] bg-white w-full md:h-[58px] flex flex-wrap md:flex-nowrap mb-[10px]">
+                        }, index) in spendingRecords.filter((item, index) => index <11)" :key="index" class="rounded-[30px] bg-white w-full md:h-[58px] flex flex-wrap md:flex-nowrap mb-[10px]">
                             <div class="text-xs sm:text-sm text-[#9a9a9a] font-semibold flex items-center h-[calc(100%-30px)] justify-between w-full md:w-[55%] m-[15px] mr-0 mb-0 md:mb-[15px] md:border-r-[1px] border-secondary">
                                 <p class="w-[250px] overflow-hidden truncate">
                                     {{ date }}<br>
@@ -91,14 +95,14 @@
                     <div class="relative flex flex-col sm:flex-row sm:items-center" style="flex: 1 1 auto" @mouseleave="resetDataName()">
                         <v-chart ref="chartsPie" class="py-4" style="width: 100%; height: 300px;" :option="pieOption"/>
                         <div class="sm:absolute sm:bottom-[5%] pl-[calc(50%-(220px/2)+6px)] sm:pl-0 sm:left-0 w-[30px] flex flex-col pointer-events-none">
-                            <div v-for="({ color, name, rate }, index) in categoryPieConsist.latestMonth" :key="index"
+                            <div v-for="({ color, name, rate }, index) in categoryPieConsist.overview" :key="index"
                                 class="w-[15px] h-[15px] rounded-full my-2 transition-all duration-300 relative z-[5] group" :style="`background-color: ${color}`" :class="[ dataName === name ? 'my-6 sm:my-4' : 'sm:my-1' ]">
                                 <div class="absolute -top-[13.5px] -left-[8px] z-[4] w-[220px] h-[42px] rounded-full flex items-center justify-between px-2" :class="[ dataName === name ? 'bg-white opacity-100 sm:opacity-80 shadow' : 'sm:bg-transparent sm:opacity-0' ]">
                                     <div class="w-[15px] h-[15px] rounded-full" :style="`background-color: ${color}`" ></div>
                                     <div class="flex justify-between items-center flex-grow-2 w-[200px] font-bold">
                                        <div class="flex items-center">
-                                            <font-awesome-icon class="text-[#999] text-base md:text-xl w-[20px] px-2" :icon="getIconForCategory(name)" />
-                                            <span class="text-base">{{ name }}</span>
+                                            <font-awesome-icon class="text-[#999] text-base md:text-xl w-[20px] pl-2 pr-1" :icon="getIconForCategory(name)" />
+                                            <span class="text-xs">{{ name.charAt(0).toUpperCase() + name.slice(1) }}</span>
                                         </div>
                                         <span class="text-lg font-extrabold text-secondary">{{ rate }}%</span>
                                     </div>
@@ -132,8 +136,6 @@
 </style>
 <script setup>
     import { getIconForCategory, monthToName, toCommas } from '~/utility';
-
-    import dayjs from 'dayjs'
     import { use } from "echarts/core";
     import { CanvasRenderer } from "echarts/renderers";
     import { PieChart, LineChart } from "echarts/charts";
@@ -154,8 +156,7 @@
         spendingRecords,
         amountDatas,
         categoryPieConsist,
-        latestMonthRecords,
-        latestMonthMergedRecords
+        overviewMergedRecords
     } = storeToRefs(userCenterStore());
 
     use([
@@ -287,13 +288,13 @@
     onMounted(() => {
         nextTick(() => {
             categoryPieConsist.value &&
-            categoryPieConsist.value.latestMonth &&
-            categoryPieConsist.value.latestMonth
+            categoryPieConsist.value.overview &&
+            categoryPieConsist.value.overview
                 .forEach(({ name, value, color }) => {
                     pieOption.value.series.data.push({ name, value });
                     pieOption.value.series.color.push(color);
                 })
-            latestMonthMergedRecords.value.forEach(({ amount, date }) => {
+            overviewMergedRecords.value.forEach(({ amount, date }) => {
                 lineOption.value.xAxis.data.push(date);
                 lineOption.value.series[0].data.push(amount);
             })

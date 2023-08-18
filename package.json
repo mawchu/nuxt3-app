@@ -8,30 +8,38 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@nuxtjs/composition-api": "^0.33.1",
     "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/tailwindcss": "^6.4.0",
+    "autoprefixer": "^10.4.15",
+    "firebase-admin": "^11.10.1",
+    "firebase-functions": "^4.4.1",
+    "firebase-functions-test": "^3.1.0",
     "nuxt": "^3.1.2",
-    "sass": "^1.58.0"
+    "sass": "^1.65.1"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.3.0",
-    "@fortawesome/free-brands-svg-icons": "^6.3.0",
-    "@fortawesome/free-regular-svg-icons": "^6.3.0",
-    "@fortawesome/free-solid-svg-icons": "^6.3.0",
+    "@babel/core": "^7.22.10",
+    "@babel/preset-env": "^7.22.10",
+    "@fortawesome/fontawesome-svg-core": "^6.4.2",
+    "@fortawesome/free-brands-svg-icons": "^6.4.2",
+    "@fortawesome/free-regular-svg-icons": "^6.4.2",
+    "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/vue-fontawesome": "^3.0.3",
     "@nuxt-modules/lazy-load": "^0.2.0",
     "@pinia/nuxt": "^0.4.7",
     "chroma-js": "^2.4.2",
     "dayjs": "^1.11.8",
-    "echarts": "^5.4.2",
+    "echarts": "^5.4.3",
     "firebase": "^9.19.1",
     "firebase-auth": "^0.1.2",
     "js-cookie": "^3.0.5",
+    "lodash-es": "^4.17.21",
     "lottie-web": "^5.10.2",
-    "pinia": "^2.0.33",
+    "pinia": "^2.1.6",
     "pleasejs": "^0.4.2",
-    "tailwind-scrollbar": "^3.0.4",
-    "vue-echarts": "^6.6.0",
+    "tailwind-scrollbar": "^3.0.5",
+    "vue-echarts": "^6.6.1",
     "vue-router": "^4.2.2"
   }
 }

@@ -14,6 +14,7 @@ export const categoryDefaultList = reactive([
     { title: '醫療', value: 'hospital', icon: ['fas', 'heart-pulse'] },
     { title: '保險', value: 'insurance', icon: ['fas', 'helmet-safety'] },
     { title: '住宿', value: 'stay', icon: ['fas', 'house-user'] },
+    { title: '育兒', value: 'mothering', icon: ['fas', 'baby-carriage'] },
     { title: '日用品', value: 'neccessary', icon: ['fas', 'basket-shopping'] },
     { title: '娛樂', value: 'entertainment', icon: ['fas', 'parachute-box'] },
     
@@ -43,6 +44,7 @@ export const regexTester = (regex, value) => regex.test(value);
 
 export function validInput (dataList, type) { 
     const { regex } = regexMap[type];
+    console.log('isValid', regexTester(regex, dataList[type]), 'type', type)
     if(!regexTester(regex, dataList[type])) return `${regexMap[type].name}格式有誤，或字數太少`;
     if(regexTester(regex, dataList[type])) return ``;
 }

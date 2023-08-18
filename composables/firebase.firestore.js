@@ -105,6 +105,7 @@ export async function deleteUserSpendingRecord ($db, userId, deleteId) {
 
 export async function editUserSpendingRecord ($db, userId, editId, newData) {
   // const user = await getUserDatas ($db);
+  console.log('newData', newData)
   try {
     const { setSpendingRecords } = userCenterStore ();
     const userDocRef = await queryTargetUserDocument ($db, userId);
@@ -125,6 +126,7 @@ export async function editUserSpendingRecord ($db, userId, editId, newData) {
       )
     });
     await setSpendingRecords(list.flat(1));
+    await console.log('list',list )
   } catch (error) {
     console.error('editUserSpendingRecord error:', error);
   }

@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 dotenv.config({
-    path: process.env.NODE_ENV === 'development' ? '.env.development' : '.env'
+    path: process.env.NODE_ENV === 'development' ? '.env.development' : '.env.production'
 })
   
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -25,5 +25,8 @@ export default defineNuxtConfig({
         autoImports: ['defineStore', 'acceptHMRUpdate'],
     },
     css: ['@fortawesome/fontawesome-svg-core/styles.css'],
-    build: { transpile: ['@fortawesome/vue-fontawesome', /echarts/], }
+    build: { transpile: ['@fortawesome/vue-fontawesome', /echarts/, 'vue-echarts', 'resize-detector'] },
+    nitro: {
+        preset: 'firebase'
+    }
 })

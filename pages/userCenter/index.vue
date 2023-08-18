@@ -51,14 +51,21 @@
             </div>
             <component :is="{...childComponent}"></component>
             
-            <button class="w-[45px] h-[45px] sm:w-[65px] sm:h-[65px] rounded-full drop-shadow-lg fixed right-[18px] bottom-[18px] z-[9] flex justify-center items-center transition-all duration-200 hover:scale-125"
-                :class="[ modalShow ? 'border-2 border-black bg-white opacity-10' : 'border-3 border-transparent bg-black' ]" 
+            <button class="w-[45px] h-[45px] sm:w-[65px] sm:h-[65px] rounded-full drop-shadow-lg fixed right-[10px] bottom-[10px] z-[10] flex justify-center items-center transition-all duration-200 hover:scale-[1.1]"
+                :class="[ modalShow ? 'border-2 border-black bg-white' : 'border-3 border-transparent bg-black' ]" 
                 @click="modalShow = !modalShow">
                 <font-awesome-icon class="text-xl sm:text-3xl ml-2" :class="[ !modalShow ? 'text-white' : 'text-black' ]" :icon="['fas', 'file-pen']" />
             </button>
 
             <!-- 新增花費 -->
-            <dialog class="fixed w-[calc(100%-20px)] sm:w-[90%] lg:w-[max(80%,800px)] xl:w-[960px] h-[96vh] sm:h-[80vh] top-[2vh] sm:top-[10vh] drop-shadow-lg rounded-[max(3vw,3vh)] z-10 bg-white flex flex-col md:flex-row p-0 transition-all duration-200" :class="[ modalShow ? '' : 'opacity-0 pointer-events-none' ]" @click="categoryDrop = false">
+            <div class="w-full h-[100vh] bg-[rgba(95,57,47,.6)] fixed top-0 left-0 transition-all duration-200"
+                :class="[
+                    modalShow || (!(toggleMenu) && deviceWidth <= 600) ? '' : 'opacity-0 pointer-events-none',
+                    !(toggleMenu) && deviceWidth <= 600 ? 'z-[2]' : 'z-[9]',
+                ]"
+                @click="modalShow = false">
+            </div>
+            <dialog class="fixed w-[calc(100%-20px)] sm:w-[90%] lg:w-[max(80%,800px)] xl:w-[960px] h-[96vh] sm:h-[80vh] top-[2vh] sm:top-[10vh] drop-shadow-lg rounded-[max(3vw,3vh)] z-[9] bg-white flex flex-col md:flex-row p-0 transition-all duration-200" :class="[ modalShow ? '' : 'opacity-0 pointer-events-none' ]" @click="categoryDrop = false">
                 <font-awesome-icon class="text-secondary absolute left-[25px] top-[20px] text-4xl cursor-pointer hover:scale-125 hover:text-black transition-all duration-200" :icon="['fas', 'xmark']" 
                     @click="modalShow = false"/>
                 <img class="absolute w-[70px] md:w-[136px] left-[15%] -bottom-[10px] md:left-[calc(100%-110px)] md:bottom-[8%] z-[11]" :src="lifebuoy" alt="">
@@ -79,7 +86,7 @@
                                             <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">日期</span>
                                         </h3>
                                     </div>
-                                    <input v-model="submitSpending.date" class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 font-bold sm:text-base md:text-lg focus:bg-primary"
+                                    <input v-model="submitSpending.date" class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-base md:text-lg focus:bg-primary"
                                     :class="mobileInputWidth" type="text" name="date"
                                     :placeholder="deviceWidth < mobileFormBreakpointSm ? '日期：' : 'YYYY/MM/DD'"
                                     @keyup="validInputMsg('date')"/>
@@ -94,7 +101,7 @@
                                             <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">商店</span>
                                         </h3>
                                     </div>
-                                    <input v-model="submitSpending.shop" class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 font-bold sm:text-base md:text-lg"  :class="mobileInputWidth"
+                                    <input v-model="submitSpending.shop" class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)]  font-bold sm:text-base md:text-lg"  :class="mobileInputWidth"
                                     :placeholder="deviceWidth < mobileFormBreakpointSm ? '商店：' : '輸入商店...'" type="text" name="shop"
                                     @keyup="validInputMsg('shop')"/>
                                 </label>
@@ -108,7 +115,7 @@
                                             <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">項目</span>
                                         </h3>
                                     </div>
-                                    <input v-model="submitSpending.item" class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 font-bold sm:text-base md:text-lg"  :class="mobileInputWidth"
+                                    <input v-model="submitSpending.item" class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-base md:text-lg"  :class="mobileInputWidth"
                                     :placeholder="deviceWidth < mobileFormBreakpointSm ? '項目：' : '輸入項目...'" type="text" name="item"
                                     @keyup="validInputMsg('item')"/>
                                 </label>
@@ -125,7 +132,7 @@
                                     </div>
                                     <!-- 自訂類別 -->
                                     <input v-model="submitSpending.selfDefinedCategory"
-                                        class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 font-bold sm:text-base md:text-lg disabled:placeholder:text-[#ccc] disabled:bg-white"
+                                        class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-base md:text-lg disabled:placeholder:text-[#ccc] disabled:bg-white"
                                         :class="[
                                             (deviceWidth < mobileFormBreakpointSm) && categoryDisabled
                                                 ? 'w-[55%]' : (deviceWidth > mobileFormBreakpointSm) && categoryDisabled
@@ -201,7 +208,7 @@
                                                 ? 'left-[80px]' : 'left-[150px]'
                                         ]">$</span>
                                     <input v-model="submitSpending.amount"
-                                        class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 font-bold sm:text-base md:text-lg text-right"  :class="mobileInputWidth"
+                                        class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-base md:text-lg text-right"  :class="mobileInputWidth"
                                         :placeholder="deviceWidth < mobileFormBreakpointSm ? '金額' : '輸入金額...'" type="text" name="amount"
                                         @keyup="validInputMsg('amount')"/>
                                 </label>
@@ -216,7 +223,7 @@
                                         </h3>
                                     </div>
                                     <textarea v-model="submitSpending.memo"
-                                        class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-semibold block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 font-bold sm:text-base md:text-lg"  :class="mobileInputWidth" rows="3"
+                                        class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-semibold block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)]  font-bold sm:text-base md:text-lg"  :class="mobileInputWidth" rows="3"
                                         placeholder="輸入備註..." type="text" name="memo"
                                         @keyup="validInputMsg('memo')"/>
                                 </label>
@@ -231,7 +238,7 @@
                             </form>
                         </div>
                     </div>
-                    <div class="w-full md:w-[40%] lg:w-[50%] h-[22%] md:h-[100%] relative rounded-r-[max(3vw,3vh)] overflow-hidden">
+                    <div class="w-full md:w-[40%] lg:w-[50%] h-[22%] md:h-[100%] relative rounded-b-[max(3vw,3vh)] md:rounded-bl-[0] md:rounded-r-[max(3vw,3vh)] overflow-hidden">
                         <span class="absolute hidden md:block md:text-2xl text-center font-extrabold text-white left-[18%] top-[calc(30%-80px)]">
                             Every<br/>spending<br>is the<br/>footprint of <br/>living =)
                         </span>
@@ -241,7 +248,7 @@
                 </div>
                 
             </dialog>
-            <div class="fixed top-0 left-0 w-full h-[100vh] flex animate z-[100] pointer-events-none"
+            <div class="fixed top-0 left-0 w-full h-[100vh] flex animate z-[10] pointer-events-none"
                 :class="[ submitSpendingFinish ? ' money' : '' ]">
                 <figure class="w-[50%] h-[100%]">
                     <img class="w-full h-[100%] object-contain object-left" :src="moneyBubbleL" alt="">
@@ -250,18 +257,13 @@
                     <img class="w-full h-[100%] object-contain object-right" :src="moneyBubbleR" alt="">
                 </figure>
             </div>
-            <div class="w-full h-[100vh] bg-[rgba(95,57,47,.6)] fixed sm:z-[9] top-0 left-0 transition-all duration-200"
-                :class="[
-                    modalShow || (!(toggleMenu) && deviceWidth <= 600) ? '' : 'opacity-0 pointer-events-none',
-                    !(toggleMenu) && deviceWidth <= 600 ? 'z-[2]' : 'z-[9]',
-                ]"
-                @click="modalShow = false">
-            </div>
+            
             
         </main>
     </section>
 </template>
 <style lang="scss">
+
     .scrollbar-color {
         scrollbar-color: blue red;
     }
@@ -303,7 +305,7 @@
 </style>
 <script setup>
     import Cookies from 'js-cookie'
-    import dayjs from 'dayjs'
+    import dayjs from 'dayjs';
     import logoWhite from '~/assets/images/logo-w.svg';
     import avatar from '~/assets/images/avatar.jpeg';
     import popupBeach from '~/assets/images/popup.svg';
@@ -344,12 +346,12 @@
     ]);
     
     const deviceWidth = ref(0);
-    const targetCategory = reactive({
+    let targetCategory = reactive({
         title: '', value: '', icon: []
     });
     const categoryDisabled = ref(true);
     const submitSpending = reactive({
-        date: '',
+        date: dayjs().format('YYYY/MM/DD'),
         createdDate: '',
         shop: '',
         item: '',
@@ -360,7 +362,7 @@
     });
     const submitSpendingFinish = ref(false);
     const validInformation = ref('');
-    const validForm = ref(true);
+    const validForm = ref(false);
     
   
 
@@ -404,14 +406,21 @@
     }
 
     async function submitSpendingAction () {
-        submitSpendingFinish.value = true;
+        submitSpendingFinish.value = await true;
         // Object.keys(submitSpending).forEach((value) => console.log(value))
         submitSpending.createdDate = dayjs().format('YYYY/MM/DD HH:mm:ss')
         await createUserSpendingRecord($db, Cookies.get('userId'), submitSpending);
         await loadUserSpendingRecord($db, Cookies.get('userId'));
         await Object.keys(submitSpending)
-            .forEach((key) => submitSpending[key] = '');
-        // setTimeout(() => submitSpendingFinish.value = false, 3000)
+            .forEach((key) => {
+                if (key !== 'date') submitSpending[key] = '';
+            });
+        targetCategory = await reactive({
+            title: '', value: '', icon: []
+        });
+
+        // submitSpendingFinish.value = await false;
+        await setTimeout(() =>  submitSpendingFinish.value = false, 3000)
     }
     
     function validInputMsg (type) {
@@ -427,17 +436,13 @@
 
     watch(submitSpending, (val,oldVal)=>{
         // console.log(Object.keys(submitSpending))
-        const valid = Object.keys(submitSpending)
+        const valid = Object.keys(regexMap)
             .every((key) => {
-                // console.log('key', key)
-                if (submitSpending[key] === '') return false;
-                if (submitSpending[key]) {
-                    const regex = regexMap[key].regex;
-                    return regexTester(regex, submitSpending[key]);
-                } 
+                const regex = regexMap[key].regex;
+                return regexTester(regex, submitSpending[key]) === true;
             })
 
-        console.log('valid', valid)
+        validForm.value = valid;
     })
 
     watch(categoryDisabled, (val,oldVal) => {
