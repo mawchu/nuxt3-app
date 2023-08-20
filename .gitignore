@@ -4,5 +4,7 @@ node_modules
 .nitro
 .cache
 .output
-.env
+.env.development
+.env.production
+.firebase
 dist
