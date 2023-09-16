@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white min-h-screen overflow-hidden">
+  <div class="bg-white min-h-fullvh overflow-hidden">
     <Transition>
       <component :is="{...component}"></component>
     </Transition>
@@ -9,6 +9,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Karla:wght@100;200;300;400;500;600;700;800&display=swap');
   :root {
     --header-height: 70px;
+    --vh: 100vh;
   }
   * {
     font-family: 'Karla', sans-serif;
@@ -38,7 +39,7 @@
 }
 </style>
 <script setup>
-  import { ref, onMounted, shallowRef } from 'vue';
+  import { ref, onMounted, onBeforeMount, shallowRef } from 'vue';
   import { storeToRefs } from 'pinia'
   import componentHome from './home/index.vue';
   import componentUserCenter from './userCenter/index.vue';
@@ -46,6 +47,18 @@
   import componentOverview from './userCenter/Overview.vue';
   // import lottie from 'lottie-web';
   // import animationData from '~/assets/lottie/animation.json';
+  onBeforeMount(() => {
+    const screenHeight = window.innerHeight;
+    document.documentElement.style.setProperty('--vh', `${screenHeight}px`);
+  })
+
+  onMounted(() => {
+    const screenHeight = window.innerHeight;
+    // You can also add an event listener to update the value if the window is resized.
+    window.addEventListener('resize', () => {
+      document.documentElement.style.setProperty('--vh', `${screenHeight}px`);
+    });
+  })
   
   const componentMap = reactive({
     userCenter: componentUserCenter,

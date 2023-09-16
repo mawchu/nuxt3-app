@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white min-h-screen overflow-hidden">
+  <div class="bg-white h-[100%] overflow-hidden">
     <MainHeader
       :currentSectionIndex="currentSectionIndex"
       :isLoggedIn="isLoggedIn"
@@ -11,7 +11,7 @@
     <!-- kv & pp -->
     <section class="bg-top">
       <!-- kv -->
-      <main class="section flex flex-wrap min-h-screen flex-col sm:flex-row items-center justify-center px-6">
+      <main class="section flex flex-wrap min-h-fullvh flex-col sm:flex-row items-center justify-center px-6">
         <div class="w-full lg:w-[60%] md:order-2 lg:order-1 mt-8 sm:pt-16 flex items-center justify-center">
           <img class="w-[70vw] max-h-[55vh]" src="~/assets/images/main-kv.svg" alt="Financial Assets Website helps solving financial issues, such as spending tracking, bills managing, and setting savings goals to fullfill step by step.">
         </div>
@@ -123,7 +123,7 @@
     <button @click="store.increment()">add me</button> -->
 
     <!-- sign in / up -->
-    <section class="section bg-bottom min-h-[calc(100vh-70px)] flex items-center py-6 pt-16 md:pt-[15vh] overflow-visible">
+    <section class="section bg-bottom min-h-contentvh flex items-center py-6 pt-16 md:pt-[15vh] overflow-visible">
       <div class="container sm:px-6 flex flex-wrap items-stretch pb-6">
         <article class="mx-8 order-2 lg:order-1 sm:w-[68%] lg:w-[30%] sm:mx-auto lg:mx-0 bg-primary rounded-t-full text-center flex flex-wrap items-center justify-center md:mx-auto my-auto min-h-[60vh] lg:min-h-[70vh] w-full">
           <div v-show="!isLoggedIn" class="flex flex-col items-center max-w-[400px]">
@@ -132,8 +132,8 @@
               <p class="font-bold text-xs sm:text-base text-white my-4 px-10 md:px-10">Register your personal financial assistant, building wealth wait for no one!</p>
             </div>
             <form class="font-extrabold" action="">
-              <input v-model="email" class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-secondary" placeholder="Email" type="text">
-              <input v-model="password" class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-secondary" placeholder="Password" type="password">
+              <input v-model="email" class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-secondary" placeholder="Email" type="text" autocomplete="email">
+              <input v-model="password" class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-secondary" placeholder="Password" type="password" @keyup.enter="registerUser()">
             </form>
             <GoButton class="py-3" type="dark" align="center" @click="registerUser()"/>
             <div class="relative inline-block font-bold cursor-pointer hover:scale-[120%] hover:font-extrabold transition-all duration-200" @click="signInGoogle()">
@@ -395,8 +395,8 @@
   const isTriggeredWave = ref(false);
   let unableToHoverSection = ref(false);
 
-  const email = ref('mawchu0412@gmail.com');
-  const password = ref('123456');
+  const email = ref('');
+  const password = ref('');
 
   setIsLoggedIn();
 
@@ -419,7 +419,9 @@
         property: 'og:description',
         content: 'Financial Assistant 財不會忘記你是一款記錄財務狀況的小幫手，可以對每一筆花費貼上標籤予以歸類，並且透過視覺化資料圖表一目瞭然資金動向；掌握每個期間的支出與收入，設定花費門檻提醒花費的額度，避免過度的開銷。'
       },
-    ]
+      
+    ],
+    link: [{ rel: 'icon', type: 'image/svg', href: "/favicon.svg" }]
   })
 
   onMounted(() => {

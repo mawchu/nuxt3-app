@@ -2,7 +2,7 @@
     <nav ref="tabs" class="header-fix overflow-visible"
         :class="[
             scrollType === 'down' || isTriggeredWave  ? 'wave' : '',
-            itemShow ? 'h-[100vh]' : 'h-[70px]'
+            itemShow ? 'h-[100%]' : 'h-[70px]'
         ]">
         <div class="w-full h-[100%] md:w-4/5 lg:w-2/3 flex flex-col">
             <ol class="flex flex-col md:flex-row md:justify-between text-lg font-semibold text-secondary">
@@ -117,7 +117,6 @@ $max-width-xs: 400px;
 
 .header-fix {
     --nav-height-md: 70px;
-    // --nav-height-sm: 100vh;
     @apply flex justify-between fixed top-0 left-0 md:h-[var(--nav-height-md)] w-full ease-in-out duration-300 pt-3 md:pt-0 px-3 lg:px-10 md:bg-[unset];
     z-index: 14;
     li, div {

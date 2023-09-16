@@ -42,7 +42,45 @@ export async function createUserSpendingRecord ($db, userId, spendingRecordData)
   } catch(error) {
     console.error(`createUserSpendingRecord error:`, error);
   }
- 
+}
+
+export async function createUserBankingList ($db, userId, bankingData) {
+  // const user = await getUserDatas ($db);
+  try {
+    const userDocRef = await queryTargetUserDocument ($db, userId);
+    const subcollectionRef = collection(userDocRef, 'bankingList');
+    // Add a document to the subcollection
+    await addDoc(subcollectionRef, bankingData);
+  } catch(error) {
+    console.error(`createUserBankingList error:`, error);
+  }
+}
+
+export async function loadUserBankingList ($db, userId) {
+  // const user = await getUserDatas ($db);
+  try {
+    const { setBankingList } = userCenterStore ();
+    const userDocRef = await queryTargetUserDocument ($db, userId);
+    const subcollectionRef = collection(userDocRef, 'bankingList');
+      // Query documents in the subcollection
+    const querySnapshot = await getDocs(subcollectionRef);
+
+    const list = [];
+    querySnapshot.forEach((doc) => {
+      // console.log("Document ID:", doc.id);
+      // console.log("Document data:", doc.data());
+      list.push(
+        {
+          id: doc.id,
+          ...doc.data()
+        }
+      )
+    });
+    await setBankingList(list.flat(1));
+    // console.log('userCenterStore', userCenterStore)
+  } catch(error) {
+    console.error('loadUserBankingList error:', error);
+  }
 }
 
 export async function loadUserSpendingRecord ($db, userId) {
@@ -70,7 +108,6 @@ export async function loadUserSpendingRecord ($db, userId) {
   } catch(error) {
     console.error('loadUserSpendingRecord error:', error);
   }
-  
 }
 
 export async function deleteUserSpendingRecord ($db, userId, deleteId) {

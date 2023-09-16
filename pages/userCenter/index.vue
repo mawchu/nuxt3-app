@@ -1,7 +1,7 @@
 <template>
-    <section class="w-full h-[100vh] bg-primary flex">
-        <nav class="sm:h-[100vh] flex flex-col justify-between items-center transition-all duration-300 w-[50px] sm:w-[84px]"
-            :class="[ toggleMenu ? '' : 'sm:w-[15%] min-w-[200px] xl:min-w-[260px] fixed top-0 left-0 z-[7] sm:relative h-[100vh] bg-primary' ]">
+    <section class="w-full max-h-fullvh bg-primary flex">
+        <nav class="max-h-fullvh flex flex-col justify-between items-center transition-all duration-300 w-[50px] sm:w-[84px]"
+            :class="[ toggleMenu ? '' : 'sm:w-[15%] min-w-[200px] xl:min-w-[260px] fixed top-0 left-0 z-[7] sm:relative  bg-primary min-h-fullvh' ]">
          
             <figure class="w-full cursor-pointer" @click="toComponent('home')">
                 <img class="m-[8px] sm:m-[20px] transition-all duration-300"
@@ -9,9 +9,12 @@
             </figure>
             <section class="w-full pb-10">
                 <article class="w-full flex flex-col justify-center items-center">
-                    <figure class="rounded-full bg-white overflow-hidden transition-all duration-300"
-                    :class="[ toggleMenu ? 'w-[34px] h-[34px] sm:w-[50px] sm:h-[50px]' : 'w-[82px] h-[82px]' ]">
-                        <img class="w-full h-[100%] object-cover" :src="avatar" alt="">
+                    <figure class="rounded-full bg-white overflow-hidden transition-all duration-300 flex justify-center items-center"
+                    :class="[ toggleMenu ? 'w-[34px] h-[34px] sm:w-[48px] sm:h-[48px]' : 'w-[82px] h-[82px]' ]">
+                        <!-- <img class="w-full h-[100%] object-cover" :src="avatar" alt=""> -->
+                        <font-awesome-icon class=" text-[#a3887e]"
+                            :icon="['fas', 'circle-user']"
+                            :class="[ toggleMenu ? 'text-4xl sm:text-5xl' : 'text-8xl' ]" />
                     </figure>
                     <strong class="text-black mt-3 md:text-md md:font-extrabold"
                     :class="[ toggleMenu ? 'opacity-0 hidden' : 'opacity-100' ]">Hi, Jamie Xie</strong>
@@ -51,13 +54,39 @@
             </div>
             <component :is="{...childComponent}"></component>
             
-            <button class="w-[45px] h-[45px] sm:w-[65px] sm:h-[65px] rounded-full drop-shadow-lg fixed right-[10px] bottom-[10px] z-[10] flex justify-center items-center transition-all duration-200 hover:scale-[1.1]"
-                :class="[ modalShow ? 'border-2 border-black bg-white' : 'border-3 border-transparent bg-black' ]" 
-                @click="modalShow = !modalShow">
-                <font-awesome-icon class="text-xl sm:text-3xl ml-2" :class="[ !modalShow ? 'text-white' : 'text-black' ]" :icon="['fas', 'file-pen']" />
-            </button>
+            <div class="fixed right-[10px] bottom-[10px] z-[10]">
+                <!-- banking assets -->
+                <!-- <button class="absolute w-[45px] h-[45px] sm:w-[65px] sm:h-[65px] rounded-full drop-shadow-lg flex justify-center items-center transition-all duration-200 hover:scale-[.9]"
+                :class="[
+                    modalShow
+                        ? 'bg-[#FCFADB] -top-[70px] scale-[.76]' : 'top-0'
+                ]" 
+                @click="setCurrentDialog('bankingList')">
+                    <font-awesome-icon class="text-xl sm:text-3xl text-secondary" :icon="['fas', 'building-columns']" />
+                </button> -->
+                <!-- spending item -->
+                <!-- <button class="w-[45px] h-[45px] sm:w-[65px] sm:h-[65px] rounded-full drop-shadow-lg flex justify-center items-center transition-all duration-200 hover:scale-[1.1] bg-black"
+                @click="setCurrentDialog('spendingItem'), modalShow = !modalShow">
+                    <font-awesome-icon class="text-xl sm:text-3xl ml-2 text-white" :icon="['fas', 'file-pen']" />
+                </button> -->
+                <button v-for="({ type, icon, sort }, index) in dialogButtons" :key="index"
+                    :class="[
+                        type === currentDialogName
+                            ? 'relative bg-black w-[45px] h-[45px] sm:w-[65px] sm:h-[65px] z-[5]' : 'absolute w-[34px] h-[34px] sm:w-[52px] sm:h-[52px] right-[5px] bg-white border-[1px] border-black sm:border-transparent md:bg-[#FCFADB] scale-1 z-0', 
+                    ]" :style="`${(type === currentDialogName || !modalShow) ? 'top: 0' : 'top: -' + sort * ( deviceWidth > 600 ? 60 : 42)}px`"
+                    class="rounded-full drop-shadow-lg flex justify-center items-center transition-all duration-200 hover:scale-[1.1] "
+                @click="setCurrentDialog(type)">
+                    <font-awesome-icon
+                        :class="[
+                            type === currentDialogName ? 'text-white text-xl sm:text-3xl ' : 'text-black md:text-secondary text-sm sm:text-2xl',
+                            type === 'spendingItem' ? 'ml-1 sm:ml-2' : ''
+                        ]" :icon="icon" />
+                </button>
+                
+            </div>
+            
 
-            <!-- 新增花費 -->
+            <!-- overlay -->
             <div class="w-full h-[100vh] bg-[rgba(95,57,47,.6)] fixed top-0 left-0 transition-all duration-200"
                 :class="[
                     modalShow || (!(toggleMenu) && deviceWidth <= 600) ? '' : 'opacity-0 pointer-events-none',
@@ -65,7 +94,8 @@
                 ]"
                 @click="modalShow = false">
             </div>
-            <dialog class="fixed w-[calc(100%-20px)] sm:w-[90%] lg:w-[max(80%,800px)] xl:w-[960px] h-[96vh] sm:h-[80vh] top-[2vh] sm:top-[10vh] drop-shadow-lg rounded-[max(3vw,3vh)] z-[9] bg-white flex flex-col md:flex-row p-0 transition-all duration-200" :class="[ modalShow ? '' : 'opacity-0 pointer-events-none' ]" @click="categoryDrop = false">
+            <!-- 新增花費 -->
+            <!-- <dialog class="fixed w-[calc(100%-20px)] sm:w-[90%] lg:w-[max(80%,800px)] xl:w-[960px] h-[96vh] sm:h-[80vh] top-[2vh] sm:top-[10vh] drop-shadow-lg rounded-[max(3vw,3vh)] z-[9] bg-white flex flex-col md:flex-row p-0 transition-all duration-200" :class="[ modalShow ? '' : 'opacity-0 pointer-events-none' ]" @click="categoryDrop = false">
                 <font-awesome-icon class="text-secondary absolute left-[25px] top-[20px] text-4xl cursor-pointer hover:scale-125 hover:text-black transition-all duration-200" :icon="['fas', 'xmark']" 
                     @click="modalShow = false"/>
                 <img class="absolute w-[70px] md:w-[136px] left-[15%] -bottom-[10px] md:left-[calc(100%-110px)] md:bottom-[8%] z-[11]" :src="lifebuoy" alt="">
@@ -76,7 +106,6 @@
                             <h2 class="text-center font-extrabold text-xl md:text-2xl text-black pt-[12px]">Add a spending</h2>
                             <div class="w-[40%] mx-auto my-4 border-b-[1px] border-black"></div>
                             <form class="max-w-[500px] sm:px-3 md:px-4 lg:px-6 mx-auto h-[100%] flex flex-wrap justify-center" @submit.prevent="">
-                                <!-- 日期 -->
                                 <label class="relative flex w-full items-center justify-end py-2" for="date">
                                     <div class="flex flex-shrink-0 justify-end text-right font-bold text-black" role="label"
                                         :class="mobileLabelWidth">
@@ -91,7 +120,6 @@
                                     :placeholder="deviceWidth < mobileFormBreakpointSm ? '日期：' : 'YYYY/MM/DD'"
                                     @keyup="validInputMsg('date')"/>
                                 </label>
-                                <!-- 商店 -->
                                 <label class="elative flex w-full items-center justify-end py-2" for="shop">
                                     <div class="flex flex-shrink-0 justify-end text-right font-bold text-black "
                                         :class="mobileLabelWidth">
@@ -105,7 +133,6 @@
                                     :placeholder="deviceWidth < mobileFormBreakpointSm ? '商店：' : '輸入商店...'" type="text" name="shop"
                                     @keyup="validInputMsg('shop')"/>
                                 </label>
-                                <!-- 項目 -->
                                 <label class="relative flex w-full items-center py-2" for="item">
                                     <div class="flex flex-shrink-0 justify-end text-right font-bold text-black "
                                         :class="mobileLabelWidth">
@@ -120,7 +147,6 @@
                                     @keyup="validInputMsg('item')"/>
                                 </label>
                                 
-                                <!-- 類別 -->
                                 <label class="relative flex w-full items-center justify-end py-2" for="category">
                                     <div class="flex flex-shrink-0 justify-end text-right font-bold text-black "
                                         :class="mobileLabelWidth">
@@ -130,7 +156,6 @@
                                             <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">類別</span>
                                         </h3>
                                     </div>
-                                    <!-- 自訂類別 -->
                                     <input v-model="submitSpending.selfDefinedCategory"
                                         class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-base md:text-lg disabled:placeholder:text-[#ccc] disabled:bg-white"
                                         :class="[
@@ -151,7 +176,6 @@
                                             ]" :icon="[categoryDisabled ? 'fas' : 'far', 'circle-xmark']"
                                             @click="categoryDisabled = !categoryDisabled, categoryDrop = !categoryDrop"/>
 
-                                    <!-- 預設類別 -->
                                     <div class="relative ml-2"
                                         :class="[ 
                                             deviceWidth < mobileFormBreakpointSm ? 'w-[45%]' : 'w-[35%]',
@@ -191,7 +215,6 @@
                                         </ul>
                                     </div>
                                 </label>
-                                <!-- 金額 -->
                                 <label class="relative flex w-full items-center py-2" for="amount">
                                     <div class="flex flex-shrink-0 justify-end text-right font-bold text-black "
                                         :class="mobileLabelWidth">
@@ -212,7 +235,6 @@
                                         :placeholder="deviceWidth < mobileFormBreakpointSm ? '金額' : '輸入金額...'" type="text" name="amount"
                                         @keyup="validInputMsg('amount')"/>
                                 </label>
-                                <!-- 備註 -->
                                 <label class="relative flex w-full items-center justify-end py-2" for="memo">
                                     <div class="flex flex-shrink-0 justify-end text-right font-bold text-black "
                                         :class="mobileLabelWidth">
@@ -227,12 +249,11 @@
                                         placeholder="輸入備註..." type="text" name="memo"
                                         @keyup="validInputMsg('memo')"/>
                                 </label>
-                                <p v-if="validInformation" class="w-full h-[20px] text-right font-bold text-secondary">
+                                <div v-if="validInformation" class="w-full h-[20px] text-right font-bold text-secondary">
                                     <font-awesome-icon
                                         class="ml-2" :icon="['fas', 'triangle-exclamation']" />
                                     {{ validInformation }}
-                                </p>
-                                <!-- 送出 -->
+                                </div>
                                 <button class="w-[120px] h-[40px] rounded-full text-lg md:text-xl font-bold text-white bg-black mt-4 border-2 border-transparent hover:border-secondary hover:bg-white hover:text-secondary transition-all duration-200 z-[4] disabled:bg-[#ddd] disabled:hover:border-transparent disabled:text-[#aaa]" :disabled="!validForm"
                                 @click.prevent="submitSpendingAction ()">Done</button>
                             </form>
@@ -247,8 +268,8 @@
                     </div>
                 </div>
                 
-            </dialog>
-            <div class="fixed top-0 left-0 w-full h-[100vh] flex animate z-[10] pointer-events-none"
+            </dialog> -->
+            <!-- <div class="fixed top-0 left-0 w-full h-[100vh] flex animate z-[10] pointer-events-none"
                 :class="[ submitSpendingFinish ? ' money' : '' ]">
                 <figure class="w-[50%] h-[100%]">
                     <img class="w-full h-[100%] object-contain object-left" :src="moneyBubbleL" alt="">
@@ -256,9 +277,10 @@
                 <figure class="w-[50%] h-[100%]">
                     <img class="w-full h-[100%] object-contain object-right" :src="moneyBubbleR" alt="">
                 </figure>
-            </div>
-            
-            
+            </div> -->
+            <component :is="currentDialog"
+                :modalShow="modalShow" :deviceWidth="deviceWidth"
+                @modalShowEmit="modalShowEmit"></component>
         </main>
     </section>
 </template>
@@ -308,37 +330,40 @@
     import dayjs from 'dayjs';
     import logoWhite from '~/assets/images/logo-w.svg';
     import avatar from '~/assets/images/avatar.jpeg';
-    import popupBeach from '~/assets/images/popup.svg';
-    import popupBeachM from '~/assets/images/popup-m.svg';
-    import lifebuoy from '~/assets/images/lifebuoy.png';
-    import beachball from '~/assets/images/beachball.png';
-    import moneyBubbleL from '~/assets/images/money-bubbles-l.svg';
-    import moneyBubbleR from '~/assets/images/money-bubbles-r.svg';
+    // import popupBeach from '~/assets/images/popup.svg';
+    // import popupBeachM from '~/assets/images/popup-m.svg';
+    // import lifebuoy from '~/assets/images/lifebuoy.png';
+    // import beachball from '~/assets/images/beachball.png';
+    // import moneyBubbleL from '~/assets/images/money-bubbles-l.svg';
+    // import moneyBubbleR from '~/assets/images/money-bubbles-r.svg';
 
     import { userAuthStore } from '~/stores/userAuth.js';
     import { userCenterStore } from '~/stores/userCenter.js';
     import { storeToRefs } from 'pinia'
-    import { categoryDefaultList, selfDefinedCategory, regexMap, regexTester, validInput } from '~/globalDatas';
+    // import { categoryDefaultList, selfDefinedCategory, regexMap, regexTester, validInput } from '~/globalDatas';
     import overview from '~/pages/userCenter/overview.vue';
     import spendingRecords from '~/pages/userCenter/spendingRecords.vue';
 
-
+    import spendingItem from './dialog/spendingItem.vue';
+    import bankingList from './dialog/bankingList.vue';
     const childComponent = ref(overview);
 
     const { setCurrentComponent } = userAuthStore();
-    const { setToggleMenu } = userCenterStore();
+    // const { setToggleMenu } = userCenterStore();
     const { toggleMenu } = storeToRefs(userCenterStore());
     const { $db } = useNuxtApp();
     
-    const mobileInputWidth = ref(null);
-    const mobileLabelWidth = ref(null);
-    const mobileFormBreakpointSm = ref(480);
-    const mobileFormBreakpointXs = ref(360);
+    // const mobileInputWidth = ref(null);
+    // const mobileLabelWidth = ref(null);
+    // const mobileFormBreakpointSm = ref(480);
+    // const mobileFormBreakpointXs = ref(360);
 
     const modalShow = ref(false);
+    const currentDialog = shallowRef({...spendingItem});
+    const currentDialogName = ref('spendingItem');
     // const toggleMenu = ref(false);
-    const categoryDrop = ref(false);
-    let categoryType = ref('default');
+    // const categoryDrop = ref(false);
+    // let categoryType = ref('default');
     const menuList = ref([
         { title: 'Overview', icon: ['fa-solid', 'fa-layer-group'], isActive: true, component: {...overview} },
         { title: 'Spending<br>Records', icon: ['fas', 'clipboard-list'], isActive: false, component: {...spendingRecords} },
@@ -346,23 +371,43 @@
     ]);
     
     const deviceWidth = ref(0);
-    let targetCategory = reactive({
-        title: '', value: '', icon: []
-    });
-    const categoryDisabled = ref(true);
-    const submitSpending = reactive({
-        date: dayjs().format('YYYY/MM/DD'),
-        createdDate: '',
-        shop: '',
-        item: '',
-        category: '',
-        selfDefinedCategory: '',
-        amount: 0,
-        memo: ''
-    });
-    const submitSpendingFinish = ref(false);
-    const validInformation = ref('');
-    const validForm = ref(false);
+    const dialogButtons = ref([
+        { type: 'spendingItem', icon: ['fas', 'file-pen'], sort: 0 },
+        { type: 'bankingList', icon: ['fas', 'building-columns'], sort: 1 },
+        { type: 'budgetIem', icon: ['fas', 'sack-dollar'], sort: 2 },
+    ])
+
+    function setCurrentDialog (dialogType) {
+        
+        if (dialogType !== currentDialogName.value) {
+            modalShow.value = true;
+        }
+        if (dialogType === currentDialogName.value) {
+            modalShow.value = !modalShow.value;
+        }
+
+        if (dialogType === 'bankingList') currentDialog.value = {...bankingList};
+        if (dialogType === 'spendingItem') currentDialog.value = {...spendingItem};
+
+        currentDialogName.value = dialogType;
+    }
+    // let targetCategory = reactive({
+    //     title: '', value: '', icon: []
+    // });
+    // const categoryDisabled = ref(true);
+    // const submitSpending = reactive({
+    //     date: dayjs().format('YYYY/MM/DD'),
+    //     createdDate: '',
+    //     shop: '',
+    //     item: '',
+    //     category: '',
+    //     selfDefinedCategory: '',
+    //     amount: 0,
+    //     memo: ''
+    // });
+    // const submitSpendingFinish = ref(false);
+    // const validInformation = ref('');
+    // const validForm = ref(false);
     
   
 
@@ -372,14 +417,12 @@
      onMounted(async() => {
         await loadUserSpendingRecord($db, Cookies.get('userId'))
         deviceWidth.value = window.innerWidth;
-        // chartsLineWidth.value = wrapperChartsLine.value.clientWidth;
-        responsiveFormWidth ();
+        // responsiveFormWidth ();
 
         window.addEventListener('resize', () => {
             deviceWidth.value = window.innerWidth;
             if (deviceWidth.value < 360) toggleMenu.value = true;
-            responsiveFormWidth ();
-            // resizeCharts ();
+            // responsiveFormWidth ();
         })
     })
 
@@ -387,45 +430,49 @@
         setCurrentComponent (componentName);
     }
 
-    function changeCategory ({
-        title, value, icon
-    }) {
-        targetCategory.title = title;
-        targetCategory.value = value;
-        targetCategory.icon = icon;
-        submitSpending.category = value;
+    function modalShowEmit () {
+        modalShow.value = false;
     }
+
+    // function changeCategory ({
+    //     title, value, icon
+    // }) {
+    //     targetCategory.title = title;
+    //     targetCategory.value = value;
+    //     targetCategory.icon = icon;
+    //     submitSpending.category = value;
+    // }
    
-    function responsiveFormWidth () {
-        mobileInputWidth.value = deviceWidth.value < mobileFormBreakpointXs.value
-            ? 'w-full' : deviceWidth.value < mobileFormBreakpointSm.value
-            ? 'w-[calc(100%-60px)]' : 'w-[calc(100%-120px)]';
-        mobileLabelWidth.value = deviceWidth.value < mobileFormBreakpointXs.value
-            ? 'w-0' : deviceWidth.value < mobileFormBreakpointSm.value
-            ? 'w-[60px] mr-2' : 'w-[120px] mr-4';
-    }
+    // function responsiveFormWidth () {
+    //     mobileInputWidth.value = deviceWidth.value < mobileFormBreakpointXs.value
+    //         ? 'w-full' : deviceWidth.value < mobileFormBreakpointSm.value
+    //         ? 'w-[calc(100%-60px)]' : 'w-[calc(100%-120px)]';
+    //     mobileLabelWidth.value = deviceWidth.value < mobileFormBreakpointXs.value
+    //         ? 'w-0' : deviceWidth.value < mobileFormBreakpointSm.value
+    //         ? 'w-[60px] mr-2' : 'w-[120px] mr-4';
+    // }
 
-    async function submitSpendingAction () {
-        submitSpendingFinish.value = await true;
-        // Object.keys(submitSpending).forEach((value) => console.log(value))
-        submitSpending.createdDate = dayjs().format('YYYY/MM/DD HH:mm:ss')
-        await createUserSpendingRecord($db, Cookies.get('userId'), submitSpending);
-        await loadUserSpendingRecord($db, Cookies.get('userId'));
-        await Object.keys(submitSpending)
-            .forEach((key) => {
-                if (key !== 'date') submitSpending[key] = '';
-            });
-        targetCategory = await reactive({
-            title: '', value: '', icon: []
-        });
+    // async function submitSpendingAction () {
+    //     submitSpendingFinish.value = await true;
+    //     // Object.keys(submitSpending).forEach((value) => console.log(value))
+    //     submitSpending.createdDate = dayjs().format('YYYY/MM/DD HH:mm:ss')
+    //     await createUserSpendingRecord($db, Cookies.get('userId'), submitSpending);
+    //     await loadUserSpendingRecord($db, Cookies.get('userId'));
+    //     await Object.keys(submitSpending)
+    //         .forEach((key) => {
+    //             if (key !== 'date') submitSpending[key] = '';
+    //         });
+    //     targetCategory = await reactive({
+    //         title: '', value: '', icon: []
+    //     });
 
-        // submitSpendingFinish.value = await false;
-        await setTimeout(() =>  submitSpendingFinish.value = false, 3000)
-    }
+    //     // submitSpendingFinish.value = await false;
+    //     await setTimeout(() =>  submitSpendingFinish.value = false, 3000)
+    // }
     
-    function validInputMsg (type) {
-        validInformation.value = validInput (submitSpending, type);
-    }
+    // function validInputMsg (type) {
+    //     validInformation.value = validInput (submitSpending, type);
+    // }
     
     function toggleSideBar (activeIndex) {
         menuList.value.forEach((item, index) => {
@@ -434,19 +481,29 @@
         })
     }
 
-    watch(submitSpending, (val,oldVal)=>{
-        // console.log(Object.keys(submitSpending))
-        const valid = Object.keys(regexMap)
-            .every((key) => {
-                const regex = regexMap[key].regex;
-                return regexTester(regex, submitSpending[key]) === true;
-            })
-
-        validForm.value = valid;
+    watch(currentDialogName, (val,oldVal)=>{
+        const activeIndex = dialogButtons.value.findIndex(({ type }) => type === currentDialogName.value);
+        dialogButtons.value.forEach((button, index) => {
+            if (index === activeIndex) button.sort = 0;
+            if (index < activeIndex) button.sort = index + 1;
+            if (index > activeIndex) button.sort = index;
+            
+        })
     })
 
-    watch(categoryDisabled, (val,oldVal) => {
-        if (categoryDisabled.value) categoryType.value = 'default';
-        if (!categoryDisabled.value) categoryType.value = 'selfDefined';
-    })
+    // watch(submitSpending, (val,oldVal)=>{
+    //     // console.log(Object.keys(submitSpending))
+    //     const valid = Object.keys(regexMap)
+    //         .every((key) => {
+    //             const regex = regexMap[key].regex;
+    //             return regexTester(regex, submitSpending[key]) === true;
+    //         })
+
+    //     validForm.value = valid;
+    // })
+
+    // watch(categoryDisabled, (val,oldVal) => {
+    //     if (categoryDisabled.value) categoryType.value = 'default';
+    //     if (!categoryDisabled.value) categoryType.value = 'selfDefined';
+    // })
 </script>

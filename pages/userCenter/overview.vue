@@ -93,7 +93,7 @@
                         </span>
                     </h3>
                     <div class="relative flex flex-col sm:flex-row sm:items-center" style="flex: 1 1 auto" @mouseleave="resetDataName()">
-                        <v-chart ref="chartsPie" class="py-4" style="width: 100%; height: 300px;" :option="pieOption"/>
+                        <v-chart ref="chartsPie" class="py-4" style="width: 100%; height: 300px;" :option="pieOption" :init-options="{ width: 'auto', height: 'auto' }"/>
                         <div class="sm:absolute sm:bottom-[5%] pl-[calc(50%-(220px/2)+6px)] sm:pl-0 sm:left-0 w-[30px] flex flex-col pointer-events-none">
                             <div v-for="({ color, name, rate }, index) in categoryPieConsist.overview" :key="index"
                                 class="w-[15px] h-[15px] rounded-full my-2 transition-all duration-300 relative z-[5] group" :style="`background-color: ${color}`" :class="[ dataName === name ? 'my-6 sm:my-4' : 'sm:my-1' ]">
@@ -125,7 +125,7 @@
                         </span>
                     </h3>
                     <div ref="wrapperChartsLine" class="flex items-center" style="flex: 1 1 auto">
-                        <v-chart ref="chartsLine" class="py-4" style="width: 100%; height: 300px;" :width="chartsLineWidth" :option="lineOption" />
+                        <v-chart ref="chartsLine" class="py-4" style="width: 100%; height: 300px;" :width="chartsLineWidth" :option="lineOption" :init-options="{ width: 'auto', height: 'auto' }"/>
                     </div>
                 </div>
             </article>
@@ -280,13 +280,14 @@
         chartsLineWidth.value = wrapperChartsLine.value.clientWidth;
         
         setTimeout(() => {
-            chartsPie.value.resize ();
-            chartsLine.value.resize ();
+            chartsPie.value && chartsPie.value.resize ();
+            chartsLine.value && chartsLine.value.resize ();
         },10)
     }
 
     onMounted(() => {
         nextTick(() => {
+            deviceWidth.value = window.innerWidth;
             categoryPieConsist.value &&
             categoryPieConsist.value.overview &&
             categoryPieConsist.value.overview
@@ -301,7 +302,6 @@
             
             window.addEventListener('resize', () => {
                 deviceWidth.value = window.innerWidth;
-                deviceWidth.value = window.innerWidth;
                 if (wrapperChartsLine.value && chartsLine.value && chartsPie.value) resizeCharts ();
             })
             
@@ -309,6 +309,10 @@
     })
 
     watch(toggleMenu, (val,oldVal)=>{
+        resizeCharts ();
+    })
+
+    watch(deviceWidth, () => {
         resizeCharts ();
     })
 

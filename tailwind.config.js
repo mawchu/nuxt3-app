@@ -18,6 +18,16 @@ module.exports = {
           tertiary: '#E9FFDD',
           quaternary: '#FBA47E'
         },
+        minHeight: {
+          // Add a custom value for --vh
+          fullvh: 'var(--vh)',
+          contentvh: 'calc(var(--vh) - 70px)'
+        },
+        maxHeight: {
+          // Add a custom value for --vh
+          fullvh: 'var(--vh)',
+          contentvh: 'calc(var(--vh) - 70px)'
+        }
       },
       fontFamily: {
         sans: ['Karla', 'Helvetica', 'Arial', 'sans-serif']

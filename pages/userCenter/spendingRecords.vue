@@ -98,7 +98,7 @@
                                             class="mx-2 text-[#999] bg-white w-[70%] px-2 text-xs" type="text" v-model="modifiedRecord[index].memo" @keyup="validInputMsg(index, 'memo')">
                                     </div>
                                 </section>
-                                <div class="w-[50px] relative text-lg z-[1] cursor-pointer">
+                                <div class="w-[50px] absolute right-[20px] top-[50%-14px] text-lg z-[1] cursor-pointer">
                                     <font-awesome-icon v-if="!isEdit" class="mr-4 hover:text-secondary hover:scale-125 " :icon="['fas', 'pen-to-square']"
                                         @click.stop="switchEditState(index)"/>
                                     <font-awesome-icon v-if="isEdit" class="mr-4 hover:text-secondary hover:scale-125" :icon="['fas', 'clipboard-check']" 
@@ -402,7 +402,7 @@
    }
    
     function validInputMsg (index, type) {
-        invalidInputMsg.value = validInput (modifiedRecord.value[index], type);
+        invalidInputMsg.value = validInput (modifiedRecord.value[index], type, regexMap);
         modifiedRecord.value[index].valid = loopInvalidInput (index);
     }
 

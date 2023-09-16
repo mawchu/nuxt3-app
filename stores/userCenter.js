@@ -21,12 +21,14 @@ export const userCenterStore = defineStore('userCenter', {
       categoryPieConsist: {
         latestMonth: null,
         overview: null
-      }
+      },
+      bankingList: []
     }),
     getters: {
       getToggleMenu: (state) => state.toggleMenu,
       getSpendingRecords: (state) => state.spendingRecords,
-      getAmountDatas: (state) => state.amountDatas
+      getAmountDatas: (state) => state.amountDatas,
+      getBankingList: (state) => state.bankingList
     },
     actions: {
       setToggleMenu (boolean) {
@@ -135,6 +137,9 @@ export const userCenterStore = defineStore('userCenter', {
         
         this.spendingRecords[index].openCounter ++;
         switchIsOpen(index);
+      },
+      setBankingList (list) {
+        this.bankingList = list;
       }
     },
   })
