@@ -1,10 +1,10 @@
 <template>
 
     <!-- 新增花費 -->
-    <dialog class="fixed w-[calc(100%-20px)] sm:w-[90%] lg:w-[max(80%,800px)] xl:w-[960px] h-[96vh] sm:h-[80vh] top-[2vh] sm:top-[10vh] drop-shadow-lg rounded-[max(3vw,3vh)] z-[9] bg-white flex flex-col md:flex-row p-0 transition-all duration-200" :class="[ props.modalShow ? '' : 'opacity-0 pointer-events-none' ]" @click="categoryDrop = false, colorsDrop = false">
+    <dialog class="fixed w-[calc(100%-20px)] sm:w-[90%] lg:w-[max(80%,800px)] xl:w-[960px] h-[96vh] sm:h-[90vh] top-[2vh] sm:top-[5vh] drop-shadow-lg rounded-[max(3vw,3vh)] z-[9] bg-white flex flex-col md:flex-row p-0 transition-all duration-200" :class="[ props.modalShow ? '' : 'opacity-0 pointer-events-none' ]" @click.capture="categoryDrop = false, colorsDrop = false, modifyBankingIndex = null">
         <font-awesome-icon class="text-secondary absolute left-[25px] top-[20px] text-4xl cursor-pointer hover:scale-125 hover:text-black transition-all duration-200" :icon="['fas', 'xmark']" 
             @click="emit('modalShowEmit', false);"/>
-        <img class="md:hidden absolute w-[70px] md:w-[136px] left-[15%] bottom-[16%] md:left-[calc(100%-110px)] md:bottom-[8%] z-[11]" :src="coinBank" alt="">
+        <img class="md:hidden absolute w-[56px] md:w-[136px] left-[15%] bottom-[16%] md:left-[calc(100%-110px)] md:bottom-[8%] z-[6]" :src="coinBank" alt="">
         <div class="w-full h-[100%] rounded-[max(3vw,3vh)] flex flex-col md:flex-row">
             <div class="w-full md:w-[60%] lg:w-[50%] h-[78%] md:h-[100%] flex items-center justify-center">
                 <div class="w-[90%]">
@@ -12,17 +12,48 @@
                     <div class="w-[40%] mx-auto my-3 border-b-[1px] border-black"></div>
                     <p class="text-center">Current account list</p>
                     <!-- banking list -->
-                    <div class="border-[1px] border-black rounded-lg min-h-[120px] my-2 sm:my-4 mx-1 sm:mx-3 p-1">
-                        <div v-for="({ bank, name, color, balance }, index) in bankingList"
-                            class="flex justify-between items-center px-2">
+                    <div class="border-[1px] border-black rounded-lg h-[120px] mt-2 sm:mt-4 mx-1 md:mx-2 p-1 overflow-hidden overflow-y-auto">
+                        <div v-for="({ id, bank, name, color, balance, isEdit }, index) in bankingList"
+                            class="flex justify-between items-center px-1 py-1 h-[28px] rounded-[6px] cursor-pointer grou" :class="[ modifyBankingIndex === index ? 'bg-[#eee]' : '' ]"
+                            @click="modifyIndex(index)">
                             <article class="flex items-center">
-                                <div class="w-[14px] h-[14px] rounded-full mr-2"
+                                <div class="w-[12px] h-[12px] rounded-full mr-2"
                                     :style="`background: ${color}`"></div>
-                                <h2 class="capitalize text-sm">{{ `${name}（${bank}）` }}</h2>
-                                
+                                <h2 v-if="!isEdit" class="capitalize text-xs sm:text-sm">{{ name }}</h2>
+                                <span v-if="!isEdit" class="hidden sm:block text-xs">（{{ bank }}）</span>
+                                <input v-if="isEdit" v-model="modifiedBankingList[index].name" class="mr-1 sm:mr-2 text-[#666] w-[36%] sm:px-2 text-xs border-b-[1px] border-black focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)]" type="text">
+                                <input v-if="isEdit" v-model="modifiedBankingList[index].bank" class="mr-1 sm:mr-2 text-[#666] w-[36%] sm:px-2 text-xs border-b-[1px] border-black focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)]" type="text">
                             </article>
-                            <span class="font-bold">$ {{ toCommas(balance) }}</span>
+                            <div class="flex flex-wrap items-center transition-all duration-200"
+                                :class="[
+                                    modifyBankingIndex === index || bankingList[index].isEdit ? 'translate-x-0' : 'translate-x-[48px]'
+                                ]">
+                                <span v-if="!isEdit" class="font-bold mr-3 text-xs sm:text-sm">
+                                    $ {{ toCommas(balance) }}</span>
+                                <span v-if="isEdit" class="mr-1 sm:mr-0">$</span>
+                                <input v-if="isEdit" v-model="modifiedBankingList[index].balance" class="mr-1 sm:mr-2 text-[#666] w-[calc(100%-50px)] sm:px-2 text-sm border-b-[1px] border-black font-bold focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)]" type="text">
+                                <font-awesome-icon v-if="!isEdit"
+                                    class="mr-1 cursor-pointer scale-95 hover:scale-110 hover:text-secondary transition-all duration-200 text-[#999]"
+                                    :icon="['fas', 'pen-clip']" 
+                                    @click="bankingList[index].isEdit = true"/>
+                                <font-awesome-icon v-if="isEdit"
+                                    class="mr-1 cursor-pointer scale-95 hover:scale-110 hover:text-secondary transition-all duration-200 text-[#999]"
+                                    :icon="['fas', 'check']" 
+                                    @click="bankingList[index].isEdit = false, editBankingItem(index, id)"/>
+                                <font-awesome-icon  v-if="isEdit"
+                                    class="cursor-pointer scale-90 hover:scale-110 hover:text-secondary transition-all duration-200 text-[#999]" :icon="['fas', 'xmark']"
+                                    @click="bankingList[index].isEdit = false"/>
+                                <font-awesome-icon  v-if="!isEdit" class="cursor-pointer scale-90 hover:scale-110 hover:text-secondary transition-all duration-200 text-[#999]" :icon="['fas', 'eraser']"
+                                    @click="deleteBankingItem(id)"/>
+                            </div>
+                            
                         </div>
+                    </div>
+                    <div class="flex justify-between my-1 mx-1 px-3 p-1 font-bold">
+                        <h3 class="text-sm">總和 total</h3>
+                        <span>$ {{ toCommas(
+                            bankingList.reduce((sum, { balance }) => sum + Number(balance), 0)
+                        ) }}</span>
                     </div>
                     <form class="max-w-[500px] sm:px-3 md:px-4 lg:px-6 mx-auto h-[100%] flex flex-wrap justify-center" @submit.prevent="">
                         <!-- 日期 -->
@@ -35,7 +66,7 @@
                                     <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">銀行</span>
                                 </h3>
                             </div>
-                            <input v-model="submitBanking.bank" class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-base md:text-lg"
+                            <input v-model="submitBanking.bank" class="placeholder:text-[#999] placeholder:text-xs placeholder:md:text-sm placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-sm md:text-base h-[28px]"
                             :class="mobileInputWidth" type="text" name="bank"
                             :placeholder="deviceWidth < mobileFormBreakpointSm ? '銀行：' : '輸入帳戶銀行...'"
                             @keyup="validInputMsg('bank')"/>
@@ -50,7 +81,7 @@
                                     <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">命名</span>
                                 </h3>
                             </div>
-                            <input v-model="submitBanking.name" class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-base md:text-lg"
+                            <input v-model="submitBanking.name" class="placeholder:text-[#999] placeholder:text-xs placeholder:md:text-sm placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-sm md:text-base h-[28px]"
                             :class="mobileInputWidth" type="text" name="bank"
                             :placeholder="deviceWidth < mobileFormBreakpointSm ? '命名：' : '輸入帳戶名稱...'"
                             @keyup="validInputMsg('name')"/>
@@ -72,7 +103,7 @@
                                         ? 'left-[80px]' : 'left-[150px]'
                                 ]">$</span>
                             <input v-model="submitBanking.balance"
-                                class="placeholder:text-[#999] placeholder:text-sm placeholder:md:text-base placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-base md:text-lg text-right"  :class="mobileInputWidth"
+                                class="placeholder:text-[#999] placeholder:text-xs placeholder:md:text-sm placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-sm md:text-base text-right h-[28px]"  :class="mobileInputWidth"
                                 :placeholder="deviceWidth < mobileFormBreakpointSm ? '結餘' : '輸入結餘...'" type="text" name="balance"
                                 @keyup="validInputMsg('balance')"/>
                         </label>
@@ -86,19 +117,19 @@
                                     <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">用途</span>
                                 </h3>
                             </div>
-                            <div class="relative w-[calc(100%-60px)]" >
-                                <button class="w-full h-[38px] sm:h-[38px] bg-[#eee] rounded-full active:border-primary active:border-2 text-sm md:text-md pl-4 flex justify-start items-center border-2 border-transparent"
+                            <div class="relative w-[100%] sm:w-[calc(100%-60px)]" >
+                                <button class="w-full h-[28px] bg-[#eee] rounded-full active:border-primary active:border-2 text-sm md:text-md pl-3 flex justify-start items-center border-2 border-transparent"
                                 @click.stop="categoryDrop = !categoryDrop, colorsDrop = false">
                                     <span>
                                         {{ purposeCategory.title ? purposeCategory.title : '選擇' }}
                                     </span>
-                                    <font-awesome-icon class="absolute right-[10px] top-[calc((38px/2)-8px)] transition-all duration-200"
+                                    <font-awesome-icon class="absolute right-[10px] top-[calc((28px/2)-8px)] transition-all duration-200"
                                         :class="[ categoryDrop ? 'rotate-180' : '' ]"
                                         :icon="['fas', 'caret-down']" />
                                 </button>
-                                <ul v-if="categoryDrop" class="absolute w-full top-[42px] left-0 bg-[#eee] rounded-[10px] z-[5] text-sm md:text-lg border-2 border-[#ccc] h-[calc(38px*4)] overflow-y-auto" @click="categoryDrop = false, colorsDrop = false">
+                                <ul v-if="categoryDrop" class="absolute w-full top-[32px] left-0 bg-[#eee] rounded-[10px] z-[5] text-sm md:text-lg border-2 border-[#ccc] h-[calc(30px*4)] overflow-y-auto" @click="categoryDrop = false, colorsDrop = false">
                                     <li v-for="({title, value}, index) in purposeDefaultList" :key="index"
-                                        class="h-[38px] px-4 flex items-center justify-between hover:bg-quaternary hover:text-white text-sm"
+                                        class="h-[28px] px-4 flex items-center justify-between hover:bg-quaternary hover:text-white text-sm"
                                         :class="[ value === purposeCategory.value ? 'bg-primary' : '' ]"
                                         @click="changeCategory({
                                             title, value, type: 'purpose'
@@ -120,20 +151,20 @@
                                     <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">顏色</span>
                                 </h3>
                             </div>
-                            <div class="relative w-[calc(100%-60px)]" >
-                                <button class="w-full h-[38px] sm:h-[38px] bg-[#eee] rounded-full active:border-primary active:border-2 text-sm md:text-md pl-4 flex justify-start items-center border-2 border-transparent"
+                            <div class="relative w-[100%] sm:w-[calc(100%-60px)]" >
+                                <button class="w-full h-[28px] bg-[#eee] rounded-full active:border-primary active:border-2 text-sm md:text-md pl-3 flex justify-start items-center border-2 border-transparent"
                                 :class="getContrastColor(submitBanking.color ? submitBanking.color : '#eeeeee')"
                                 :style="{ background: submitBanking.color || '#eee' }"
                                 @click.stop="colorsDrop = !colorsDrop, categoryDrop = false">
                                     {{ submitBanking.color ? submitBanking.color : '選擇帳戶色彩...'}}
-                                    <font-awesome-icon class="absolute right-[10px] top-[calc((38px/2)-8px)] transition-all duration-200"
+                                    <font-awesome-icon class="absolute right-[10px] top-[calc((28px/2)-8px)] transition-all duration-200"
                                         :class="[
                                             colorsDrop ? 'rotate-180' : ''
                                         ]"
                                         :icon="['fas', 'caret-down']" />
                                 </button>
                                 <ul v-if="colorsDrop"
-                                    class="absolute flex w-full top-[42px] left-0 bg-[#eee] rounded-[10px] justify-around items-center px-2 z-[5] text-sm md:text-lg border-2 border-[#ccc] h-[36px] overflow-y-auto"
+                                    class="absolute flex w-full top-[32px] left-0 bg-[#eee] rounded-[10px] justify-around items-center px-2 z-[5] text-sm md:text-lg border-2 border-[#ccc] h-[36px] overflow-y-auto"
                                     @click="colorsDrop = false, categoryDrop = false">
                                     <li v-for="(color, index) in colors" :key="index"
                                         class="flex items-center justify-between transition-all duration-300 hover:bg-quaternary hover:text-white text-sm rounded-full overflow-hidden hover:cursor-pointer hover:scale-125 hover:border-primary border-[2px]"
@@ -243,7 +274,8 @@
     const { bankingList } = storeToRefs(userCenterStore());
     const { $db } = useNuxtApp();
     
-    
+    let modifiedBankingList = ref([]);
+    let modifyBankingIndex = ref(null);
     const mobileInputWidth = ref(null);
     const mobileLabelWidth = ref(null);
     const mobileFormBreakpointSm = ref(480);
@@ -280,8 +312,7 @@
     const validInformation = ref('');
     const validForm = ref(false);
 
-    await loadUserBankingList($db, Cookies.get('userId'));
-    await console.log('bankingList', bankingList.value[0])
+    await resetBankingList ();
     
     onMounted(() => {
         deviceWidth.value = window.innerWidth;
@@ -290,6 +321,15 @@
             responsiveFormWidth ();
         })
     })
+
+    onActivated(async () => {
+        await resetBankingList ();
+    })
+
+    async function resetBankingList () {
+        await loadUserBankingList($db, Cookies.get('userId'));
+        modifiedBankingList.value = await JSON.parse(JSON.stringify(bankingList.value));
+    }
 
     function changeCategory ({
         type, title, value
@@ -305,7 +345,6 @@
         }
         
     }
-    
    
     function responsiveFormWidth () {
         mobileInputWidth.value = deviceWidth.value < mobileFormBreakpointXs.value
@@ -321,10 +360,7 @@
         submitBankingFinish.value = await true;
         submitBanking.createdDate = dayjs().format('YYYY/MM/DD HH:mm:ss')
         await createUserBankingList($db, Cookies.get('userId'), submitBanking);
-        await loadUserBankingList($db, Cookies.get('userId'));
-        console.log(
-            'bankingList', bankingList.value
-        )
+        await resetBankingList ();
         await Object.keys(submitBanking)
             .forEach((key) => {
                 if (key !== 'date') submitBanking[key] = '';
@@ -337,6 +373,11 @@
         // submitBankingFinish.value = await false;
         await setTimeout(() =>  submitBankingFinish.value = false, 3000)
     }
+
+    async function deleteBankingItem (deleteId) {
+        await deleteUserBankingList($db, Cookies.get('userId'), deleteId)
+        await resetBankingList ();
+   }
     
     function validInputMsg (type) {
         console.log('type', type)
@@ -358,6 +399,72 @@
         // Use white text for dark backgrounds and black text for light backgrounds
         return brightness > 200 ? 'text-black' :'text-white';
     }
+
+    function switchEditState (index) {
+        bankingList.value[index].isEdit = !originalRecord.value[index].isEdit
+    }
+
+    function modifyIndex (index) {
+        modifyBankingIndex.value = index;
+    }
+
+    function loopInvalidInput (index) {
+        const modifiedData = modifiedBankingList.value[index];
+        console.log('modifiedData', modifiedData)
+        const {
+            id,
+            name,
+            bank,
+            color,
+            balance,
+            purpose
+        } = modifiedData;
+
+        const newData = {
+            id,
+            name,
+            bank,
+            color,
+            balance,
+            purpose
+        };
+
+        const valid = Object.keys(newData)
+            .filter((key) => key !== 'id')
+            .every((key) => {
+                const regex = regexMapBanking[key].regex;
+                return regexTester(regex, newData[key]) === true;
+            })
+        
+        return valid;
+   }
+
+    async function editBankingItem(index, editId) {
+        const valid = loopInvalidInput (index);
+        const modifiedData = modifiedBankingList.value[index];
+        const {
+            id,
+            name,
+            bank,
+            color,
+            balance,
+            purpose
+        } = modifiedData;
+        if (valid) {
+            await editUserBankingList(
+                $db, Cookies.get('userId'), editId,
+                {
+                    id,
+                    name,
+                    bank,
+                    color,
+                    balance,
+                    purpose
+                });
+            await resetBankingList ();
+            modifyBankingIndex.value = await null;
+        }
+   }
 
     watch(submitBanking, (val,oldVal)=>{
         // console.log(Object.keys(submitBanking))

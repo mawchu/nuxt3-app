@@ -139,7 +139,12 @@ export const userCenterStore = defineStore('userCenter', {
         switchIsOpen(index);
       },
       setBankingList (list) {
-        this.bankingList = list;
+        this.bankingList = list.map((item) => (
+          {
+            ...item,
+            isEdit: false
+          }
+        ));
       }
     },
   })

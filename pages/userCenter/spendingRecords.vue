@@ -99,11 +99,11 @@
                                     </div>
                                 </section>
                                 <div class="w-[50px] absolute right-[20px] top-[50%-14px] text-lg z-[1] cursor-pointer">
-                                    <font-awesome-icon v-if="!isEdit" class="mr-4 hover:text-secondary hover:scale-125 " :icon="['fas', 'pen-to-square']"
+                                    <font-awesome-icon v-if="!isEdit" class="mr-4 hover:text-secondary hover:scale-125 text-[#999] transition-all duration-200" :icon="['fas', 'pen-to-square']"
                                         @click.stop="switchEditState(index)"/>
-                                    <font-awesome-icon v-if="isEdit" class="mr-4 hover:text-secondary hover:scale-125" :icon="['fas', 'clipboard-check']" 
+                                    <font-awesome-icon v-if="isEdit" class="mr-4 hover:text-secondary hover:scale-125  text-[#999] transition-all duration-200" :icon="['fas', 'clipboard-check']" 
                                         @click.stop="editRecord(index, id)"/>
-                                    <font-awesome-icon class="hover:text-secondary hover:scale-125" :icon="['fas', 'trash']" @click="deleteRecord(id)"/>
+                                    <font-awesome-icon class="hover:text-secondary hover:scale-125 text-[#999] transition-all duration-200" :icon="['fas', 'trash']" @click="deleteRecord(id)"/>
                                 </div>
                                 
                             </div>
