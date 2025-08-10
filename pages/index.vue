@@ -58,6 +58,12 @@
     window.addEventListener('resize', () => {
       document.documentElement.style.setProperty('--vh', `${screenHeight}px`);
     });
+
+    const script = document.createElement('script');
+    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5882544496919980'; // Replace with your AdSense script URL
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
   })
   
   const componentMap = reactive({

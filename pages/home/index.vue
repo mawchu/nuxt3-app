@@ -132,8 +132,8 @@
               <p class="font-bold text-xs sm:text-base text-white my-4 px-10 md:px-10">Register your personal financial assistant, building wealth wait for no one!</p>
             </div>
             <form class="font-extrabold" action="">
-              <input v-model="email" class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-secondary" placeholder="Email" type="text" autocomplete="email">
-              <input v-model="password" class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-secondary" placeholder="Password" type="password" @keyup.enter="registerUser()">
+              <input v-model="email" class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-secondary focus:outline-none focus:border-primary focus:ring-secondary focus:ring-2 focus:bg-tertiary autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-base md:text-lg" placeholder="Email" type="text" autocomplete="email">
+              <input v-model="password" class="w-[80%] my-3 py-3 px-4 rounded-tl-3xl rounded-br-xl bg-tertiary placeholder:text-secondary focus:outline-none focus:border-primary focus:ring-secondary focus:ring-2 focus:bg-tertiary autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-base md:text-lg" placeholder="Password" type="password" @keyup.enter="registerUser()">
             </form>
             <GoButton class="py-3" type="dark" align="center" @click="registerUser()"/>
             <div class="relative inline-block font-bold cursor-pointer hover:scale-[120%] hover:font-extrabold transition-all duration-200" @click="signInGoogle()">

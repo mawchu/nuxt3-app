@@ -1,13 +1,13 @@
 <template>
 
     <!-- 新增花費 -->
-    <dialog class="fixed w-[calc(100%-20px)] sm:w-[90%] lg:w-[max(80%,800px)] xl:w-[960px] h-[96vh] sm:h-[80vh] top-[2vh] sm:top-[10vh] drop-shadow-lg rounded-[max(3vw,3vh)] z-[9] bg-white flex flex-col md:flex-row p-0 transition-all duration-200" :class="[ props.modalShow ? '' : 'opacity-0 pointer-events-none' ]" @click="categoryDrop = false">
+    <dialog class="fixed w-[calc(100%-20px)] sm:w-[90%] lg:w-[max(80%,800px)] xl:w-[960px] top-[2vh] sm:h-[80vh] sm:top-[10vh] drop-shadow-lg rounded-[max(3vw,3vh)] z-[9] bg-white flex flex-col md:flex-row p-0 transition-all duration-200" :class="[ props.modalShow ? '' : 'opacity-0 pointer-events-none' ]" :style="deviceWidth < 600 ? `height: calc(${deviceHeight}px - 4vh)` : ''" @click="categoryDrop = false">
         <font-awesome-icon class="text-secondary absolute left-[25px] top-[20px] text-4xl cursor-pointer hover:scale-125 hover:text-black transition-all duration-200" :icon="['fas', 'xmark']" 
             @click="emit('modalShowEmit', false);"/>
         <img class="absolute w-[70px] md:w-[136px] left-[15%] -bottom-[10px] md:left-[calc(100%-110px)] md:bottom-[8%] z-[11]" :src="lifebuoy" alt="">
         <img class="absolute w-[30px] md:w-[60px] left-[5%] bottom-[calc(26%-60px)] md:left-[calc(60%-20px)] lg:left-[calc(50%-20px)] md:top-[22%] z-[11]" :src="beachball" alt="">
         <div class="w-full h-[100%] rounded-[max(3vw,3vh)] flex flex-col md:flex-row">
-            <div class="w-full md:w-[60%] lg:w-[50%] h-[78%] md:h-[100%] flex items-center justify-center">
+            <div class="w-full md:w-[60%] lg:w-[50%] h-[82%] md:h-[100%] flex items-center justify-center">
                 <div class="w-[90%]">
                     <h2 class="text-center font-extrabold text-xl md:text-2xl text-black pt-[12px]">Add a spending</h2>
                     <div class="w-[40%] mx-auto my-3 border-b-[1px] border-black"></div>
@@ -174,7 +174,7 @@
                     </form>
                 </div>
             </div>
-            <div class="w-full md:w-[40%] lg:w-[50%] h-[22%] md:h-[100%] relative rounded-b-[max(3vw,3vh)] md:rounded-bl-[0] md:rounded-r-[max(3vw,3vh)] overflow-hidden">
+            <div class="w-full md:w-[40%] lg:w-[50%] h-[18%] md:h-[100%] relative rounded-b-[max(3vw,3vh)] md:rounded-bl-[0] md:rounded-r-[max(3vw,3vh)] overflow-hidden">
                 <span class="absolute hidden md:block md:text-2xl text-center font-extrabold text-white left-[18%] top-[calc(30%-80px)]">
                     Every<br/>spending<br>is the<br/>footprint of <br/>living =)
                 </span>
@@ -268,9 +268,14 @@
         deviceWidth: {
             required: true,
             default: 0
+        },
+        deviceHeight: {
+            required: true,
+            default: 0
         }
     });
-    const deviceWidth = ref(0);
+    const deviceWidth = ref(props.deviceWidth);
+    const deviceHeight = ref(props.deviceHeight);
     const emit = defineEmits([
         'modalShowEmit'
     ]);
@@ -301,6 +306,8 @@
         responsiveFormWidth ();
         window.addEventListener('resize', () => {
             responsiveFormWidth ();
+            deviceHeight.value = props.deviceHeight;
+            deviceWidth.value = props.deviceWidth;
         })
     })
 

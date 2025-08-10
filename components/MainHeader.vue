@@ -20,7 +20,7 @@
                     </figure>
                 </li>
                 <li v-for="({ title, icon }, index) in menu" :key="index"
-                    class="menu-item md:flex flex-col relative w-full h-[70px] items-center item linear duration-300 group overflow-hidden mt-6 md:mt-0"
+                    class="menu-item md:flex flex-col relative w-full h-[60px] items-center item linear duration-300 group overflow-hidden mt-6 md:mt-0"
                     :class="[
                         (triggeredByObsered(index) && scrollType === 'down') ||
                         (triggeredByObsered(index) && isTriggeredWave) ? 'active' : '',
@@ -204,7 +204,6 @@ $max-width-xs: 400px;
         inset: -5px;
         pointer-events: none;
         transform: scale(0);
-
         background-repeat: repeat-x;
         transform: translateY(-100px);
         background-position: bottom left;
@@ -222,7 +221,7 @@ $max-width-xs: 400px;
         &::after, &::before {
             transform: translateY(0);
             @media all and (max-width: #{$max-width-md}) {
-                transform: translateY(-100px);
+                transform: translateY(-200px);
             }
         }
         

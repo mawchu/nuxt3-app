@@ -1,193 +1,220 @@
 <template>
 
     <!-- 新增花費 -->
-    <dialog class="fixed w-[calc(100%-20px)] sm:w-[90%] lg:w-[max(80%,800px)] xl:w-[960px] h-[96vh] sm:h-[90vh] top-[2vh] sm:top-[5vh] drop-shadow-lg rounded-[max(3vw,3vh)] z-[9] bg-white flex flex-col md:flex-row p-0 transition-all duration-200" :class="[ props.modalShow ? '' : 'opacity-0 pointer-events-none' ]" @click.capture="categoryDrop = false, colorsDrop = false, modifyBankingIndex = null">
+    <dialog class="fixed w-[calc(100%-20px)] sm:w-[90%] lg:w-[max(80%,800px)] xl:w-[960px] top-[2vh] sm:h-[80vh] sm:top-[10vh] drop-shadow-lg rounded-[max(3vw,3vh)] z-[9] bg-white flex flex-col md:flex-row p-0 transition-all duration-200"
+        :class="[ props.modalShow ? '' : 'opacity-0 pointer-events-none' ]"
+        :style="deviceWidth < 600 ? `height: calc(${deviceHeight}px - 4vh)` : ''"
+        @click.capture="categoryDrop = false, colorsDrop = false, modifyBankingIndex = null">
         <font-awesome-icon class="text-secondary absolute left-[25px] top-[20px] text-4xl cursor-pointer hover:scale-125 hover:text-black transition-all duration-200" :icon="['fas', 'xmark']" 
             @click="emit('modalShowEmit', false);"/>
         <img class="md:hidden absolute w-[56px] md:w-[136px] left-[15%] bottom-[16%] md:left-[calc(100%-110px)] md:bottom-[8%] z-[6]" :src="coinBank" alt="">
         <div class="w-full h-[100%] rounded-[max(3vw,3vh)] flex flex-col md:flex-row">
             <div class="w-full md:w-[60%] lg:w-[50%] h-[78%] md:h-[100%] flex items-center justify-center">
                 <div class="w-[90%]">
-                    <h2 class="text-center font-extrabold text-xl md:text-2xl text-black pt-[12px]">Add a Bank Account</h2>
+                    <div class="flex justify-center items-center">
+                        <!-- <font-awesome-icon :icon="['fas', showBankList ? 'toggle-on' : 'toggle-off']" /> -->
+                        <font-awesome-icon class="mx-1"
+                            :class="[ showBankList ? 'pointer-events-none text-[#999]' : 'cursor-pointer' ]"
+                            :icon="['fas', 'book-bookmark']" @click="showBankList = true"/>
+                        <font-awesome-icon class="mx-1"
+                            :class="[ !showBankList ? 'pointer-events-none text-[#999]' : 'cursor-pointer' ]"
+                            :icon="['fas', 'clipboard']" @click="showBankList = false" />
+                    </div>
+                    <h2 class="text-center font-extrabold text-xl md:text-2xl text-black pt-[12px]">
+                        Add a Bank Account
+                    </h2>
                     <div class="w-[40%] mx-auto my-3 border-b-[1px] border-black"></div>
-                    <p class="text-center">Current account list</p>
-                    <!-- banking list -->
-                    <div class="border-[1px] border-black rounded-lg h-[120px] mt-2 sm:mt-4 mx-1 md:mx-2 p-1 overflow-hidden overflow-y-auto">
-                        <div v-for="({ id, bank, name, color, balance, isEdit }, index) in bankingList"
-                            class="flex justify-between items-center px-1 py-1 h-[28px] rounded-[6px] cursor-pointer grou" :class="[ modifyBankingIndex === index ? 'bg-[#eee]' : '' ]"
-                            @click="modifyIndex(index)">
-                            <article class="flex items-center">
-                                <div class="w-[12px] h-[12px] rounded-full mr-2"
-                                    :style="`background: ${color}`"></div>
-                                <h2 v-if="!isEdit" class="capitalize text-xs sm:text-sm">{{ name }}</h2>
-                                <span v-if="!isEdit" class="hidden sm:block text-xs">（{{ bank }}）</span>
-                                <input v-if="isEdit" v-model="modifiedBankingList[index].name" class="mr-1 sm:mr-2 text-[#666] w-[36%] sm:px-2 text-xs border-b-[1px] border-black focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)]" type="text">
-                                <input v-if="isEdit" v-model="modifiedBankingList[index].bank" class="mr-1 sm:mr-2 text-[#666] w-[36%] sm:px-2 text-xs border-b-[1px] border-black focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)]" type="text">
-                            </article>
-                            <div class="flex flex-wrap items-center transition-all duration-200"
-                                :class="[
-                                    modifyBankingIndex === index || bankingList[index].isEdit ? 'translate-x-0' : 'translate-x-[48px]'
-                                ]">
-                                <span v-if="!isEdit" class="font-bold mr-3 text-xs sm:text-sm">
-                                    $ {{ toCommas(balance) }}</span>
-                                <span v-if="isEdit" class="mr-1 sm:mr-0">$</span>
-                                <input v-if="isEdit" v-model="modifiedBankingList[index].balance" class="mr-1 sm:mr-2 text-[#666] w-[calc(100%-50px)] sm:px-2 text-sm border-b-[1px] border-black font-bold focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)]" type="text">
-                                <font-awesome-icon v-if="!isEdit"
-                                    class="mr-1 cursor-pointer scale-95 hover:scale-110 hover:text-secondary transition-all duration-200 text-[#999]"
-                                    :icon="['fas', 'pen-clip']" 
-                                    @click="bankingList[index].isEdit = true"/>
-                                <font-awesome-icon v-if="isEdit"
-                                    class="mr-1 cursor-pointer scale-95 hover:scale-110 hover:text-secondary transition-all duration-200 text-[#999]"
-                                    :icon="['fas', 'check']" 
-                                    @click="bankingList[index].isEdit = false, editBankingItem(index, id)"/>
-                                <font-awesome-icon  v-if="isEdit"
-                                    class="cursor-pointer scale-90 hover:scale-110 hover:text-secondary transition-all duration-200 text-[#999]" :icon="['fas', 'xmark']"
-                                    @click="bankingList[index].isEdit = false"/>
-                                <font-awesome-icon  v-if="!isEdit" class="cursor-pointer scale-90 hover:scale-110 hover:text-secondary transition-all duration-200 text-[#999]" :icon="['fas', 'eraser']"
-                                    @click="deleteBankingItem(id)"/>
-                            </div>
-                            
-                        </div>
-                    </div>
-                    <div class="flex justify-between my-1 mx-1 px-3 p-1 font-bold">
-                        <h3 class="text-sm">總和 total</h3>
-                        <span>$ {{ toCommas(
-                            bankingList.reduce((sum, { balance }) => sum + Number(balance), 0)
-                        ) }}</span>
-                    </div>
-                    <form class="max-w-[500px] sm:px-3 md:px-4 lg:px-6 mx-auto h-[100%] flex flex-wrap justify-center" @submit.prevent="">
-                        <!-- 日期 -->
-                        <label class="relative flex w-full items-center justify-end py-[0.3rem]" for="date">
-                            <div class="flex flex-shrink-0 justify-end text-right font-bold text-black" role="label"
-                                :class="mobileLabelWidth">
-                                <h3>
-                                    <span class="font-bold text-sm sm:text-base"
-                                        :class="[ deviceWidth < mobileFormBreakpointXs ? 'hidden' : '' ]">Bank </span>
-                                    <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">銀行</span>
-                                </h3>
-                            </div>
-                            <input v-model="submitBanking.bank" class="placeholder:text-[#999] placeholder:text-xs placeholder:md:text-sm placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-sm md:text-base h-[28px]"
-                            :class="mobileInputWidth" type="text" name="bank"
-                            :placeholder="deviceWidth < mobileFormBreakpointSm ? '銀行：' : '輸入帳戶銀行...'"
-                            @keyup="validInputMsg('bank')"/>
-                        </label>
-                        <!-- 命名 -->
-                        <label class="relative flex w-full items-center justify-end py-[0.3rem]" for="date">
-                            <div class="flex flex-shrink-0 justify-end text-right font-bold text-black" role="label"
-                                :class="mobileLabelWidth">
-                                <h3>
-                                    <span class="font-bold text-sm sm:text-base"
-                                        :class="[ deviceWidth < mobileFormBreakpointXs ? 'hidden' : '' ]">Name </span>
-                                    <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">命名</span>
-                                </h3>
-                            </div>
-                            <input v-model="submitBanking.name" class="placeholder:text-[#999] placeholder:text-xs placeholder:md:text-sm placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-sm md:text-base h-[28px]"
-                            :class="mobileInputWidth" type="text" name="bank"
-                            :placeholder="deviceWidth < mobileFormBreakpointSm ? '命名：' : '輸入帳戶名稱...'"
-                            @keyup="validInputMsg('name')"/>
-                        </label>
-                        <!-- 結餘 -->
-                        <label class="relative flex w-full items-center justify-end py-[0.3rem]" for="balance">
-                            <div class="flex flex-shrink-0 justify-end text-right font-bold text-black" role="label"
-                                :class="mobileLabelWidth">
-                                <h3>
-                                    <span class="font-bold text-sm sm:text-base"
-                                        :class="[ deviceWidth < mobileFormBreakpointXs ? 'hidden' : '' ]">Balance </span>
-                                    <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">結餘</span>
-                                </h3>
-                            </div>
-                            <span class="absolute left-[150px] text-black font-bold"
-                                :class="[
-                                    deviceWidth < mobileFormBreakpointXs
-                                        ? 'left-[15px]' : deviceWidth < mobileFormBreakpointSm
-                                        ? 'left-[80px]' : 'left-[150px]'
-                                ]">$</span>
-                            <input v-model="submitBanking.balance"
-                                class="placeholder:text-[#999] placeholder:text-xs placeholder:md:text-sm placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-sm md:text-base text-right h-[28px]"  :class="mobileInputWidth"
-                                :placeholder="deviceWidth < mobileFormBreakpointSm ? '結餘' : '輸入結餘...'" type="text" name="balance"
-                                @keyup="validInputMsg('balance')"/>
-                        </label>
-                        <!-- 目的 -->
-                        <label class="relative flex w-full items-center justify-end py-[0.3rem]" for="category">
-                            <div class="flex flex-shrink-0 justify-end text-right font-bold text-black "
-                                :class="mobileLabelWidth">
-                                <h3>
-                                    <span class="font-bold text-sm sm:text-base"
-                                        :class="[ deviceWidth < mobileFormBreakpointXs ? 'hidden' : '' ]">Purpose </span>
-                                    <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">用途</span>
-                                </h3>
-                            </div>
-                            <div class="relative w-[100%] sm:w-[calc(100%-60px)]" >
-                                <button class="w-full h-[28px] bg-[#eee] rounded-full active:border-primary active:border-2 text-sm md:text-md pl-3 flex justify-start items-center border-2 border-transparent"
-                                @click.stop="categoryDrop = !categoryDrop, colorsDrop = false">
-                                    <span>
-                                        {{ purposeCategory.title ? purposeCategory.title : '選擇' }}
+                    <Transition mode="out-in">
+                        <!-- banking list -->
+                        <section v-if="showBankList">
+                            <p class="text-center mr-2">Current account list</p>
+                            <div class="border-[1px] rounded-lg mt-2 sm:mt-4 mx-1 md:mx-2 h-[180px] md:h-auto overflow-hidden overflow-y-auto transition-all duration-300 border-black">
+                            <div v-for="({ id, bank, name, color, balance, isEdit }, index) in bankingList"
+                                class="flex justify-between items-center px-1 py-1 h-[28px] rounded-[6px] cursor-pointer grou" :class="[ modifyBankingIndex === index ? 'bg-[#eee]' : '' ]"
+                                @click="modifyIndex(index)">
+                                <article class="flex items-center">
+                                    <div class="w-[12px] h-[12px] rounded-full mr-2"
+                                        :style="`background: ${color}`"></div>
+                                    <h2 v-if="!isEdit" class="capitalize text-xs sm:text-sm">{{ name }}</h2>
+                                    <span v-if="!isEdit" class="hidden sm:block text-xs">（{{ bank }}）</span>
+                                    <input v-if="isEdit" v-model="modifiedBankingList[index].name" class="mr-1 sm:mr-2 text-[#666] w-[36%] sm:px-2 text-xs border-b-[1px] border-black focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)]" type="text">
+                                    <input v-if="isEdit" v-model="modifiedBankingList[index].bank" class="mr-1 sm:mr-2 text-[#666] w-[36%] sm:px-2 text-xs border-b-[1px] border-black focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)]" type="text">
+                                </article>
+                                <div class="flex flex-wrap items-center transition-all duration-200"
+                                    :class="[
+                                        modifyBankingIndex === index || bankingList[index].isEdit ? 'translate-x-0' : 'translate-x-[48px]'
+                                    ]">
+                                    <span v-if="!isEdit" class="font-bold mr-3 text-xs sm:text-sm">
+                                        $
                                     </span>
-                                    <font-awesome-icon class="absolute right-[10px] top-[calc((28px/2)-8px)] transition-all duration-200"
-                                        :class="[ categoryDrop ? 'rotate-180' : '' ]"
-                                        :icon="['fas', 'caret-down']" />
-                                </button>
-                                <ul v-if="categoryDrop" class="absolute w-full top-[32px] left-0 bg-[#eee] rounded-[10px] z-[5] text-sm md:text-lg border-2 border-[#ccc] h-[calc(30px*4)] overflow-y-auto" @click="categoryDrop = false, colorsDrop = false">
-                                    <li v-for="({title, value}, index) in purposeDefaultList" :key="index"
-                                        class="h-[28px] px-4 flex items-center justify-between hover:bg-quaternary hover:text-white text-sm"
-                                        :class="[ value === purposeCategory.value ? 'bg-primary' : '' ]"
-                                        @click="changeCategory({
-                                            title, value, type: 'purpose'
-                                        })">
-                                        
-                                        {{ title ? title : '' }}
-                                    </li>
-                                </ul>
-                                
+                                    <span v-if="!isEdit" class="font-bold mr-3 text-xs sm:text-sm">
+                                        {{ toCommas(balance) }}
+                                    </span>
+                                    <span v-if="isEdit" class="mr-1 sm:mr-0">$</span>
+                                    <input v-if="isEdit" v-model="modifiedBankingList[index].balance" class="mr-1 sm:mr-2 text-[#666] w-[calc(100%-50px)] sm:px-2 text-sm border-b-[1px] border-black font-bold focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary  autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)]" type="text">
+                                    <font-awesome-icon v-if="!isEdit"
+                                        class="mr-1 cursor-pointer scale-95 hover:scale-110 hover:text-secondary transition-all duration-200 text-[#999]"
+                                        :icon="['fas', 'pen-clip']" 
+                                        @click="bankingList[index].isEdit = true"/>
+                                    <font-awesome-icon v-if="isEdit"
+                                        class="mr-1 cursor-pointer scale-95 hover:scale-110 hover:text-secondary transition-all duration-200 text-[#999]"
+                                        :icon="['fas', 'check']" 
+                                        @click="bankingList[index].isEdit = false, editBankingItem(index, id)"/>
+                                    <font-awesome-icon  v-if="isEdit"
+                                        class="cursor-pointer scale-90 hover:scale-110 hover:text-secondary transition-all duration-200 text-[#999]" :icon="['fas', 'xmark']"
+                                        @click="bankingList[index].isEdit = false"/>
+                                    <font-awesome-icon  v-if="!isEdit" class="cursor-pointer scale-90 hover:scale-110 hover:text-secondary transition-all duration-200 text-[#999]" :icon="['fas', 'eraser']"
+                                        @click="deleteBankingItem(id)"/>
+                                </div>
                             </div>
-                        </label>
-                        <!-- 目的 -->
-                        <label class="relative flex w-full items-center justify-end py-[0.3rem]" for="category">
-                            <div class="flex flex-shrink-0 justify-end text-right font-bold text-black "
-                                :class="mobileLabelWidth">
-                                <h3>
-                                    <span class="font-bold text-sm sm:text-base"
-                                        :class="[ deviceWidth < mobileFormBreakpointXs ? 'hidden' : '' ]">Color </span>
-                                    <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">顏色</span>
-                                </h3>
                             </div>
-                            <div class="relative w-[100%] sm:w-[calc(100%-60px)]" >
-                                <button class="w-full h-[28px] bg-[#eee] rounded-full active:border-primary active:border-2 text-sm md:text-md pl-3 flex justify-start items-center border-2 border-transparent"
-                                :class="getContrastColor(submitBanking.color ? submitBanking.color : '#eeeeee')"
-                                :style="{ background: submitBanking.color || '#eee' }"
-                                @click.stop="colorsDrop = !colorsDrop, categoryDrop = false">
-                                    {{ submitBanking.color ? submitBanking.color : '選擇帳戶色彩...'}}
-                                    <font-awesome-icon class="absolute right-[10px] top-[calc((28px/2)-8px)] transition-all duration-200"
+                            <div class="flex justify-between my-1 mx-1 px-3 p-1 font-bold">
+                                <h3 class="text-sm">總和 total</h3>
+                                <span>$ {{ toCommas(
+                                    bankingList.reduce((sum, { balance }) => sum + Number(balance), 0)
+                                ) }}</span>
+                            </div>
+                        </section>
+                        <section v-else class="overflow-hidden transition-all duration-300">
+                            <p class="text-center mr-2">Account information</p>
+                            <form class="max-w-[500px] sm:px-3 md:px-4 lg:px-6 mx-auto flex flex-wrap justify-center py-4"
+                                @submit.prevent="">
+                                <!-- bank -->
+                                <label class="relative flex w-[50%] sm:w-full items-center justify-end py-[0.3rem]" for="date">
+                                    <div class="flex flex-shrink-0 justify-end text-right font-bold text-black" role="label"
+                                        :class="mobileLabelWidth">
+                                        <h3>
+                                            <span class="font-bold text-sm sm:text-base"
+                                                :class="[ deviceWidth < mobileFormBreakpointXs ? 'hidden' : '' ]">Bank </span>
+                                            <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">銀行</span>
+                                        </h3>
+                                    </div>
+                                    <input v-model="submitBanking.bank" class="placeholder:text-[#999] placeholder:text-xs placeholder:md:text-sm placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-sm md:text-base h-[28px]"
+                                    :class="mobileInputWidth" type="text" name="bank"
+                                    :placeholder="deviceWidth < mobileFormBreakpointSm ? '銀行：' : '輸入帳戶銀行...'"
+                                    @keyup="validInputMsg('bank')"/>
+                                </label>
+                                <!-- 命名 -->
+                                <label class="relative flex w-[50%] sm:w-full items-center justify-end py-[0.3rem]" for="date">
+                                    <div class="flex flex-shrink-0 justify-end text-right font-bold text-black" role="label"
+                                        :class="mobileLabelWidth">
+                                        <h3>
+                                            <span class="font-bold text-sm sm:text-base"
+                                                :class="[ deviceWidth < mobileFormBreakpointXs ? 'hidden' : '' ]">Name </span>
+                                            <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">命名</span>
+                                        </h3>
+                                    </div>
+                                    <input v-model="submitBanking.name" class="placeholder:text-[#999] placeholder:text-xs placeholder:md:text-sm placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-sm md:text-base h-[28px]"
+                                    :class="mobileInputWidth" type="text" name="bank"
+                                    :placeholder="deviceWidth < mobileFormBreakpointSm ? '命名：' : '輸入帳戶名稱...'"
+                                    @keyup="validInputMsg('name')"/>
+                                </label>
+                                <!-- 結餘 -->
+                                <label class="relative flex w-full items-center justify-end py-[0.3rem]" for="balance">
+                                    <div class="flex flex-shrink-0 justify-end text-right font-bold text-black" role="label"
+                                        :class="mobileLabelWidth">
+                                        <h3>
+                                            <span class="font-bold text-sm sm:text-base"
+                                                :class="[ deviceWidth < mobileFormBreakpointXs ? 'hidden' : '' ]">Balance </span>
+                                            <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">結餘</span>
+                                        </h3>
+                                    </div>
+                                    <span class="absolute left-[150px] text-black font-bold"
                                         :class="[
-                                            colorsDrop ? 'rotate-180' : ''
-                                        ]"
-                                        :icon="['fas', 'caret-down']" />
-                                </button>
-                                <ul v-if="colorsDrop"
-                                    class="absolute flex w-full top-[32px] left-0 bg-[#eee] rounded-[10px] justify-around items-center px-2 z-[5] text-sm md:text-lg border-2 border-[#ccc] h-[36px] overflow-y-auto"
-                                    @click="colorsDrop = false, categoryDrop = false">
-                                    <li v-for="(color, index) in colors" :key="index"
-                                        class="flex items-center justify-between transition-all duration-300 hover:bg-quaternary hover:text-white text-sm rounded-full overflow-hidden hover:cursor-pointer hover:scale-125 hover:border-primary border-[2px]"
-                                        :class="[ color === colorCategory.value ? 'border-secondary scale-125' : 'border-transparent' ]"
-                                        :style="`background: ${color}; width: 16px; height: 16px`"
-                                        @click="changeCategory({
-                                            title, value: color, type: 'color'
-                                        }), validInputMsg('color')">
-                                    </li>
-                                </ul>
-                                
-                            </div>
-                        </label>
-                        <div v-if="validInformation" class="w-full h-[20px] text-right font-bold text-secondary">
-                            <font-awesome-icon
-                                class="ml-2" :icon="['fas', 'triangle-exclamation']" />
-                            {{ validInformation }}
-                        </div>
+                                            deviceWidth < mobileFormBreakpointXs
+                                                ? 'left-[15px]' : deviceWidth < mobileFormBreakpointSm
+                                                ? 'left-[80px]' : 'left-[150px]'
+                                        ]">$</span>
+                                    <input v-model="submitBanking.balance"
+                                        class="placeholder:text-[#999] placeholder:text-xs placeholder:md:text-sm placeholder:font-medium block bg-[#eee] border rounded-[20px] py-1 pl-4 pr-3 focus:outline-none focus:border-primary focus:ring-primary focus:ring-1 focus:bg-primary autofill:shadow-[inset_0_0_0px_1000px_rgb(240,240,240)] font-bold sm:text-sm md:text-base text-right h-[28px]"  :class="mobileInputWidth"
+                                        :placeholder="deviceWidth < mobileFormBreakpointSm ? '結餘' : '輸入結餘...'" type="text" name="balance"
+                                        @keyup="validInputMsg('balance')"/>
+                                </label>
+                                <!-- 目的 -->
+                                <label class="relative flex w-full items-center justify-end py-[0.3rem]" for="category">
+                                    <div class="flex flex-shrink-0 justify-end text-right font-bold text-black "
+                                        :class="mobileLabelWidth">
+                                        <h3>
+                                            <span class="font-bold text-sm sm:text-base"
+                                                :class="[ deviceWidth < mobileFormBreakpointXs ? 'hidden' : '' ]">Purpose </span>
+                                            <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">用途</span>
+                                        </h3>
+                                    </div>
+                                    <div class="relative w-[100%] sm:w-[calc(100%-60px)]" >
+                                        <button class="w-full h-[28px] bg-[#eee] rounded-full active:border-primary active:border-2 text-sm md:text-md pl-3 flex justify-start items-center border-2 border-transparent"
+                                        @click.stop="categoryDrop = !categoryDrop, colorsDrop = false">
+                                            <span>
+                                                {{ purposeCategory.title ? purposeCategory.title : '選擇' }}
+                                            </span>
+                                            <font-awesome-icon class="absolute right-[10px] top-[calc((28px/2)-8px)] transition-all duration-200"
+                                                :class="[ categoryDrop ? 'rotate-180' : '' ]"
+                                                :icon="['fas', 'caret-down']" />
+                                        </button>
+                                        <ul v-if="categoryDrop" class="absolute w-full top-[32px] left-0 bg-[#eee] rounded-[10px] z-[5] text-sm md:text-lg border-2 border-[#ccc] h-[calc(30px*4)] overflow-y-auto" @click="categoryDrop = false, colorsDrop = false">
+                                            <li v-for="({title, value}, index) in purposeDefaultList" :key="index"
+                                                class="h-[28px] px-4 flex items-center justify-between hover:bg-quaternary hover:text-white text-sm"
+                                                :class="[ value === purposeCategory.value ? 'bg-primary' : '' ]"
+                                                @click="changeCategory({
+                                                    title, value, type: 'purpose'
+                                                })">
+                                                
+                                                {{ title ? title : '' }}
+                                            </li>
+                                        </ul>
+                                        
+                                    </div>
+                                </label>
+                                <!-- 目的 -->
+                                <label class="relative flex w-full items-center justify-end py-[0.3rem]" for="category">
+                                    <div class="flex flex-shrink-0 justify-end text-right font-bold text-black "
+                                        :class="mobileLabelWidth">
+                                        <h3>
+                                            <span class="font-bold text-sm sm:text-base"
+                                                :class="[ deviceWidth < mobileFormBreakpointXs ? 'hidden' : '' ]">Color </span>
+                                            <span class="text-sm" :class="[ deviceWidth < mobileFormBreakpointSm ? 'hidden' : '' ]">顏色</span>
+                                        </h3>
+                                    </div>
+                                    <div class="relative w-[100%] sm:w-[calc(100%-60px)]" >
+                                        <button class="w-full h-[28px] bg-[#eee] rounded-full active:border-primary active:border-2 text-sm md:text-md pl-3 flex justify-start items-center border-2 border-transparent"
+                                        :class="getContrastColor(submitBanking.color ? submitBanking.color : '#eeeeee')"
+                                        :style="{ background: submitBanking.color || '#eee' }"
+                                        @click.stop="colorsDrop = !colorsDrop, categoryDrop = false">
+                                            {{ submitBanking.color ? submitBanking.color : '選擇帳戶色彩...'}}
+                                            <font-awesome-icon class="absolute right-[10px] top-[calc((28px/2)-8px)] transition-all duration-200"
+                                                :class="[
+                                                    colorsDrop ? 'rotate-180' : ''
+                                                ]"
+                                                :icon="['fas', 'caret-down']" />
+                                        </button>
+                                        <ul v-if="colorsDrop"
+                                            class="absolute flex w-full top-[32px] left-0 bg-[#eee] rounded-[10px] justify-around items-center px-2 z-[5] text-sm md:text-lg border-2 border-[#ccc] h-[36px] overflow-y-auto"
+                                            @click="colorsDrop = false, categoryDrop = false">
+                                            <li v-for="(color, index) in colors" :key="index"
+                                                class="flex items-center justify-between transition-all duration-300 hover:bg-quaternary hover:text-white text-sm rounded-full overflow-hidden hover:cursor-pointer hover:scale-125 hover:border-primary border-[2px]"
+                                                :class="[ color === colorCategory.value ? 'border-secondary scale-125' : 'border-transparent' ]"
+                                                :style="`background: ${color}; width: 16px; height: 16px`"
+                                                @click="changeCategory({
+                                                    title, value: color, type: 'color'
+                                                }), validInputMsg('color')">
+                                            </li>
+                                        </ul>
+                                        
+                                    </div>
+                                </label>
+                                <div v-if="validInformation" class="w-full h-[20px] text-right font-bold text-secondary">
+                                    <font-awesome-icon
+                                        class="ml-2" :icon="['fas', 'triangle-exclamation']" />
+                                    {{ validInformation }}
+                                </div>
 
-                        <!-- 送出 -->
-                        <button class="w-[120px] h-[40px] rounded-full text-lg md:text-xl font-bold text-white bg-black mt-4 border-2 border-transparent hover:border-secondary hover:bg-white hover:text-secondary transition-all duration-200 z-[4] disabled:bg-[#ddd] disabled:hover:border-transparent disabled:text-[#aaa]" :disabled="!validForm"
-                        @click.prevent="submitBankingAction ()">Done</button>
-                    </form>
+                                <!-- 送出 -->
+                                <button class="w-[120px] h-[40px] rounded-full text-lg md:text-xl font-bold text-white bg-black mt-4 border-2 border-transparent hover:border-secondary hover:bg-white hover:text-secondary transition-all duration-200 z-[4] disabled:bg-[#ddd] disabled:hover:border-transparent disabled:text-[#aaa]" :disabled="!validForm"
+                                @click.prevent="submitBankingAction ()">Done</button>
+                            </form>
+                        </section>
+                    </Transition>
+                    
+
                 </div>
             </div>
             <div class="w-full md:w-[40%] lg:w-[50%] h-[22%] md:h-[100%] relative rounded-b-[max(3vw,3vh)] md:rounded-bl-[0] md:rounded-r-[max(3vw,3vh)] overflow-hidden" >
@@ -280,11 +307,16 @@
     const mobileLabelWidth = ref(null);
     const mobileFormBreakpointSm = ref(480);
     const mobileFormBreakpointXs = ref(360);
+    let showBankList = ref(true);
 
     const props = defineProps({
         modalShow: {
             required: true,
             default: false
+        },
+        deviceHeight: {
+            required: true,
+            default: 0
         }
     });
     const deviceWidth = ref(0);
@@ -369,6 +401,7 @@
             title: '', value: '', icon: []
         });
         colorCategory = await reactive({ value: '' });
+        showBankList.value = true;
 
         // submitBankingFinish.value = await false;
         await setTimeout(() =>  submitBankingFinish.value = false, 3000)

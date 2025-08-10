@@ -239,6 +239,8 @@
     let showModal = ref(false);
     let currentMonth = ref('');
     let amountData = ref(0);
+    const recordsMonthsGap = ref([])
+    let currentGapIndex = ref(0);
     // let sortMap = reactive({
     //     date: 'desc',
     //     createdTime: 'asc',
@@ -252,11 +254,16 @@
     });
 
     function resetSpendingRecords () {
-        console.log('resetSpendingRecords')
+        // console.log('resetSpendingRecords')
         // const { spendingRecords } = storeToRefs(userCenterStore());
         let [list] = recordsMonths.value
             .filter(({ month }) => month === currentMonth.value)
             .map(({ list }) => list);
+
+        currentGapIndex.value = recordsMonths.value.length;
+        recordsMonthsGap.value.push(
+            ...recordsMonths.value.filter((month, index) => index > (currentGapIndex.value - 4))
+        )
 
         list = orderBy(list, ['date'], [isAsc.value ? 'asc' : 'desc']);
 
@@ -421,6 +428,9 @@
         modifiedRecord.value = orderBy(modifiedRecord.value, [type], [order]);
     }
 
+    function toggleMonths () {
+        if(currentGapIndex.value > 0) currentGapIndex.value --;
+    }
 
     watch(isAsc, (val, oldVal) => {
         sortByType(sortType.value, isAsc[sortType.value] ? 'asc' : 'desc');

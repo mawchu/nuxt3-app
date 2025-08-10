@@ -13,7 +13,8 @@
                         <div class="w-full flex justify-between">
                             <p class="text-sm sm:text-base  font-semibold text-[#9a9a9a] leading-[16px] sm:leading-[14px] lg:leading-[18px]">
                                 Total Amount<br>
-                                <span v-if="overviewMergedRecords.length" class="text-xs">{{ overviewMergedRecords[0].date }} - {{ overviewMergedRecords[overviewMergedRecords.length-1].date.substring(5)  }}</span>
+                                <span v-if="overviewMergedRecords.length" class="text-xs">
+                                    {{ overviewMergedRecords[overviewMergedRecords.length-1].date }} - {{ overviewMergedRecords[0].date.substring(5) }}</span>
                             </p>
                                 
                             <font-awesome-icon class="text-secondary text-3xl" :icon="['fa-solid', 'fa-ellipsis']" />
@@ -45,7 +46,7 @@
                 <div class="mb-4 md:mb-5 xl:mb-6">
                     <font-awesome-icon icon="fa-solid fa-clock" />
                     <span class="mx-2 md:mx-3 text-center font-extrabold transition-all duration-300">
-                        Recently Spending
+                        Recent Spending
                     </span>
                 </div>
                 <div class="w-full lg:w-full lg:pr-6 overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-100 scrollbar-rounded-lg">
@@ -62,13 +63,13 @@
                             isOpen,
                             isEdit
                         }, index) in spendingRecords.filter((item, index) => index <11)" :key="index" class="rounded-[30px] bg-white w-full md:h-[58px] flex flex-wrap md:flex-nowrap mb-[10px]">
-                            <div class="text-xs sm:text-sm text-[#9a9a9a] font-semibold flex items-center h-[calc(100%-30px)] justify-between w-full md:w-[55%] m-[15px] mr-0 mb-0 md:mb-[15px] md:border-r-[1px] border-secondary">
+                            <div class="text-xs sm:text-sm text-[#9a9a9a] font-semibold flex items-center h-[calc(100%-30px)] justify-between w-full md:w-[55%] m-[10px] sm:m-[15px] sm:mr-0 mr-0 mb-0 md:mb-[15px] md:border-r-[1px] border-secondary">
                                 <p class="w-[250px] overflow-hidden truncate">
                                     {{ date }}<br>
                                     {{ item }}
                                 </p>
                                 <font-awesome-icon
-                                    class="text-xl md:text-2xl text-secondary mr-[15px] border-b-[1px] md:border-b-0 border-secondary pb-[8px] sm:pb-[15px] md:pb-0 md:mb-0"
+                                    class="text-base sm:text-lg md:text-xl text-secondary mr-[15px] border-b-[1px] md:border-b-0 border-secondary pb-[8px] sm:pb-[15px] md:pb-0 md:mb-0"
                                     :icon="getIconForCategory(category)" />
                             </div>
                             <div class="text-2xl sm:text-2xl text-secondary font-black flex items-center h-[100%] justify-between w-full md:w-[45%] p-[15px]">
@@ -274,7 +275,7 @@
                     textBorderColor: 'transparent',
                     lineHeight: 20,
                     formatter: function (params) {
-                        console.log(params)
+                        // console.log(params)
                         const { name, value, color } = params.data;
                         return `${name.charAt(0).toUpperCase() + name.slice(1)}\n$ ${toCommas(value)}`
                         
